@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absolut Motors — Los Angeles, CA</title>
+<meta name="description" content="Premium dealership and car rentals in Los Angeles, California.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ABSOLUT MOTORS — fase 1 · paleta noite/asfalto/sódio/xenon
+   ============================================================ */
+:root{
+  --asfalto:#0C0E12; --grafite:#161A21; --grafite-2:#1D232C;
+  --farol:#EDF1F4; --sodio:#E8A13D; --xenon:#9FC4DE;
+  --cromo:#39414C; --cromo-tx:#8B96A3;
+  --f-display:"Saira",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --pin-h:300vh; --pin-h-finale:200vh;
+}
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ overflow-x:clip; }
+body{
+  background:var(--asfalto); color:var(--farol);
+  font-family:var(--f-body); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  /* NUNCA usar overflow-x:hidden aqui: desabilita position:sticky no
+     Safari desktop e derruba o pin dos vídeos. clip corta sem criar
+     scroll container. */
+  overflow-x:clip;
+}
+@supports not (overflow:clip){ body{ overflow-x:hidden; } }
+img,video,canvas{ display:block; max-width:100%; }
+a{ color:inherit; }
+::selection{ background:var(--sodio); color:var(--asfalto); }
+:focus-visible{ outline:2px solid var(--sodio); outline-offset:3px; border-radius:2px; }
+.view[hidden]{ display:none; }
+
+.eyebrow{ font-family:var(--f-mono); font-size:.72rem; letter-spacing:.32em; text-transform:uppercase; color:var(--sodio); }
+.display{ font-family:var(--f-display); font-weight:800; text-transform:uppercase; letter-spacing:.02em; line-height:1.02; }
+.mono{ font-family:var(--f-mono); font-variant-numeric:tabular-nums; }
+
+/* ============================================================
+   HEADER: logo + páginas + idioma
+   ============================================================ */
+.site-header{
+  position:fixed; inset:0 0 auto 0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:10px clamp(12px,4vw,48px);
+  background:linear-gradient(to bottom, rgba(12,14,18,.9), rgba(12,14,18,0));
+  pointer-events:none;
+}
+.site-header a, .site-header button{ pointer-events:auto; }
+.logo-link{
+  display:flex; align-items:center; min-height:44px; flex-shrink:0;
+  position:relative; overflow:hidden; border-radius:4px;
+}
+/* hover na logo: a mesma varredura de luz do finale, em miniatura —
+   uma faixa xenon cruza o lettering com um pulso de brilho */
+.logo-link::after{
+  content:""; position:absolute; top:-30%; bottom:-30%; left:0; width:34%;
+  background:linear-gradient(100deg, transparent,
+      rgba(237,241,244,.5) 45%, rgba(159,196,222,.75) 50%,
+      rgba(237,241,244,.5) 55%, transparent);
+  transform:translateX(-170%) skewX(-12deg);
+  opacity:0; pointer-events:none; mix-blend-mode:screen;
+}
+@media (hover:hover) and (pointer:fine){
+  .logo-link:hover::after,
+  .logo-link:focus-visible::after{ animation:logoVarredura .9s ease forwards; }
+  .logo-link:hover img,
+  .logo-link:focus-visible img{ animation:logoBrilho .9s ease; }
+}
+@keyframes logoVarredura{
+  0%{ transform:translateX(-170%) skewX(-12deg); opacity:0; }
+  15%{ opacity:1; }
+  85%{ opacity:1; }
+  100%{ transform:translateX(430%) skewX(-12deg); opacity:0; }
+}
+@keyframes logoBrilho{
+  0%{ filter:brightness(1); }
+  45%{ filter:brightness(1.6) drop-shadow(0 0 10px rgba(159,196,222,.7)); }
+  100%{ filter:brightness(1); }
+}
+.logo-link img{ height:32px; width:auto; }
+.logo-fallback{ font-family:var(--f-display); font-weight:800; letter-spacing:.14em; text-transform:uppercase; font-size:1rem; text-decoration:none; }
+.header-dir{ display:flex; align-items:center; gap:4px; }
+.nav{ display:flex; }
+.nav a{
+  display:inline-flex; align-items:center;
+  min-height:44px; padding:0 14px;
+  font-family:var(--f-mono); font-size:.74rem;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--cromo-tx); text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:color .25s ease, border-color .25s ease;
+}
+.nav a:hover{ color:var(--farol); }
+.nav a[aria-current="page"]{ color:var(--sodio); border-bottom-color:var(--sodio); }
+.lang{
+  display:flex; align-self:center;
+  border:1px solid var(--cromo); border-radius:3px;
+  overflow:hidden; margin-left:10px;
+  background:var(--grafite); /* grafite molhado — mesma superfície dos cards */
+}
+.lang button{
+  min-height:32px; min-width:34px; padding:0 8px;
+  background:transparent; border:0; cursor:pointer;
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.1em; color:var(--cromo-tx);
+  transition:color .2s ease, background .2s ease;
+}
+.lang button + button{ border-left:1px solid var(--cromo); }
+/* ativo: âmbar-sódio discreto, sem bloco sólido */
+.lang button[aria-pressed="true"]{ background:rgba(232,161,61,.14); color:var(--sodio); }
+.lang button:hover:not([aria-pressed="true"]){ color:var(--farol); }
+
+/* ============================================================
+   ANIMAÇÃO DE ENTRADA GENÉRICA das páginas internas
+   (reversível: a classe é tirada quando o elemento sai por baixo)
+   ============================================================ */
+body.js-motion [data-anim]{
+  opacity:0; transform:translateY(26px);
+  transition:opacity .7s cubic-bezier(.22,.8,.3,1), transform .7s cubic-bezier(.22,.8,.3,1);
+}
+body.js-motion [data-anim].anim-in{ opacity:1; transform:none; }
+body.js-motion [data-anim="esq"]{ transform:translateX(-60px); }
+body.js-motion [data-anim="bg"]{ transform:scale(1.08); transition-duration:1.2s; }
+body.js-motion [data-anim="bg"].anim-in{ transform:scale(1); }
+
+/* ============================================================
+   HOME · SEÇÃO 1 — HERO (container 300vh, vídeo pinado)
+   ============================================================ */
+.pin-wrap{ position:relative; height:var(--pin-h); }
+.pin-wrap--finale{ height:var(--pin-h-finale); }
+.pin-sticky{ position:sticky; top:0; height:100vh; height:100svh; overflow:hidden; }
+.hero-midia, .farol-midia{ position:absolute; inset:0; }
+.hero-midia video, .hero-midia canvas,
+.farol-midia video, .farol-midia canvas{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+}
+.midia-fx{ position:absolute; inset:0; will-change:transform,filter; }
+.hero-overlay{ position:absolute; inset:0; background:var(--asfalto); opacity:0; pointer-events:none; }
+.hero-copy{
+  position:absolute; inset:0; z-index:2;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding:0 clamp(16px,5vw,64px) clamp(72px,12vh,120px);
+  pointer-events:none;
+}
+.hero-copy .eyebrow{ margin-bottom:14px; }
+.hero-finale{
+  position:absolute; inset:0; z-index:3;
+  display:grid; place-items:center; pointer-events:none;
+}
+.hero-finale img{ width:min(58vw, 500px); height:auto; will-change:transform,opacity,filter; }
+body.js-motion .hero-finale img{ opacity:0; } /* o rAF assume */
+body.sem-motion .hero-finale{ display:none; }
+/* Entrada da primeira frase: desliza do lado com o brilho subindo,
+   passa do ponto (brightness 1.35 + glow xenon) e assenta em 1 —
+   como um farol varrendo o texto. Roda no load e ao voltar à home. */
+body.js-motion .hero-copy .eyebrow,
+body.js-motion .hero-copy .hero-titulo{
+  opacity:0;
+  animation:heroEntradaEsq 1.15s cubic-bezier(.22,.8,.3,1) forwards;
+}
+body.js-motion .hero-copy .hero-sub{
+  opacity:0;
+  animation:heroEntradaDir 1.15s cubic-bezier(.22,.8,.3,1) forwards;
+  animation-delay:.34s;
+}
+body.js-motion .hero-copy .hero-titulo{ animation-delay:.16s; }
+@keyframes heroEntradaEsq{
+  0%{
+    opacity:0; transform:translateX(-76px);
+    filter:brightness(.15) blur(9px) drop-shadow(0 0 0 rgba(159,196,222,0));
+  }
+  60%{
+    opacity:1; transform:translateX(4px);
+    filter:brightness(1.35) blur(0) drop-shadow(0 0 24px rgba(159,196,222,.55));
+  }
+  100%{
+    opacity:1; transform:none;
+    filter:brightness(1) blur(0) drop-shadow(0 0 0 rgba(159,196,222,0));
+  }
+}
+@keyframes heroEntradaDir{
+  0%{
+    opacity:0; transform:translateX(76px);
+    filter:brightness(.15) blur(9px) drop-shadow(0 0 0 rgba(159,196,222,0));
+  }
+  60%{
+    opacity:1; transform:translateX(-4px);
+    filter:brightness(1.35) blur(0) drop-shadow(0 0 24px rgba(159,196,222,.55));
+  }
+  100%{
+    opacity:1; transform:none;
+    filter:brightness(1) blur(0) drop-shadow(0 0 0 rgba(159,196,222,0));
+  }
+}
+.hero-titulo{ font-size:clamp(2.4rem, 8vw, 6.5rem); max-width:14ch; }
+.hero-sub{ margin-top:16px; max-width:44ch; color:var(--cromo-tx); font-size:clamp(.95rem,1.4vw,1.1rem); }
+@keyframes hintPulse{ 0%,100%{opacity:.35} 50%{opacity:1} }
+
+/* ============================================================
+   HOME · SEÇÃO 2 — ESTOQUE (emenda contínua)
+   ============================================================ */
+.sec-estoque{ position:relative; min-height:200vh; }
+.estoque-bg{ position:absolute; inset:0; z-index:0; overflow:hidden; }
+.estoque-bg img{ width:100%; height:100%; object-fit:cover; filter:saturate(.35) brightness(.9); }
+.estoque-bg::after{ content:""; position:absolute; inset:0; background:var(--asfalto); opacity:.88; }
+.estoque-pin{ position:relative; z-index:1; }
+.estoque-conteudo{
+  position:relative; z-index:1;
+  padding:clamp(64px,12vh,140px) clamp(16px,5vw,64px) clamp(80px,10vh,120px);
+  max-width:1360px; margin:0 auto;
+}
+.sec-head{ margin-bottom:clamp(32px,5vh,56px); }
+.sec-head h2{ font-size:clamp(1.8rem,4.5vw,3.2rem); margin-top:10px; }
+.sec-head p{ color:var(--cromo-tx); max-width:52ch; margin-top:10px; }
+
+.grid-carros{ display:grid; gap:clamp(14px,2vw,24px); grid-template-columns:repeat(auto-fill, minmax(290px,1fr)); }
+.card{
+  background:var(--grafite); border:1px solid var(--cromo);
+  border-radius:6px; overflow:hidden;
+  transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+}
+.card-media{
+  position:relative; aspect-ratio:16/10; overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 110%, rgba(232,161,61,.16), transparent 55%),
+    linear-gradient(160deg, #1D232C, #10141A 70%);
+}
+.card-media img{ width:100%; height:100%; object-fit:cover; transition:transform .25s ease, opacity .3s ease; }
+/* Galeria do card:
+   - toque (mobile): swipe lateral com scroll-snap troca a foto
+   - ponteiro fino (desktop): crossfade da 2ª foto no hover */
+.card-media .galeria{
+  position:absolute; inset:0; display:flex;
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.card-media .galeria::-webkit-scrollbar{ display:none; }
+.card-media .galeria img{
+  flex:0 0 100%; scroll-snap-align:start;
+}
+/* Ações no hover dos Selecionados (home): Apply / Connect with us
+   expandem no CORPO do card, abaixo do preço — a foto fica livre. */
+.card-acoes{
+  display:flex; gap:10px; overflow:hidden;
+  max-height:0; opacity:0; margin-top:0;
+  transition:max-height .3s cubic-bezier(.22,.8,.3,1),
+             opacity .25s ease, margin-top .3s ease;
+}
+.card-acoes .btn{ flex:1; justify-content:center; white-space:nowrap; }
+.btn--mini{ min-height:40px; padding:0 14px; font-size:.7rem; }
+@media (hover:hover) and (pointer:fine){
+  [data-view='home'] .card:hover .card-acoes,
+  [data-view='home'] .card:focus-within .card-acoes{
+    max-height:56px; opacity:1; margin-top:14px;
+  }
+}
+
+.galeria-dots{
+  position:absolute; right:10px; bottom:10px; display:flex; gap:5px;
+  pointer-events:none;
+}
+.galeria-dots span{
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(237,241,244,.35);
+  transition:background .2s ease;
+}
+.galeria-dots span.ativa{ background:var(--sodio); }
+@media (hover:hover) and (pointer:fine){
+  .card-media .galeria{ overflow:hidden; }
+  .card-media .galeria img{ position:absolute; inset:0; }
+  .card-media .galeria img + img{ opacity:0; }
+  .card:hover .galeria img + img,
+  .card:focus-visible .galeria img + img{ opacity:1; }
+  /* Ações no hover dos Selecionados (home): Apply / Connect with us
+   expandem no CORPO do card, abaixo do preço — a foto fica livre. */
+.card-acoes{
+  display:flex; gap:10px; overflow:hidden;
+  max-height:0; opacity:0; margin-top:0;
+  transition:max-height .3s cubic-bezier(.22,.8,.3,1),
+             opacity .25s ease, margin-top .3s ease;
+}
+.card-acoes .btn{ flex:1; justify-content:center; white-space:nowrap; }
+.btn--mini{ min-height:40px; padding:0 14px; font-size:.7rem; }
+@media (hover:hover) and (pointer:fine){
+  [data-view='home'] .card:hover .card-acoes,
+  [data-view='home'] .card:focus-within .card-acoes{
+    max-height:56px; opacity:1; margin-top:14px;
+  }
+}
+
+.galeria-dots{ display:none; } /* no desktop o hover conta a história */
+}
+.card-media .placeholder-silhueta{
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-family:var(--f-display); font-weight:700; text-transform:uppercase;
+  letter-spacing:.2em; color:var(--cromo); font-size:.8rem;
+}
+.card-badges{ position:absolute; top:10px; left:10px; display:flex; gap:6px; }
+.badge{
+  font-family:var(--f-mono); font-size:.6rem; letter-spacing:.18em;
+  text-transform:uppercase; padding:5px 9px; border-radius:3px;
+  background:rgba(12,14,18,.75); color:var(--cromo-tx); border:1px solid var(--cromo);
+}
+.badge--destaque{ color:var(--sodio); border-color:var(--sodio); }
+.card-body{ padding:16px 18px 18px; }
+.card-marca{ font-family:var(--f-mono); font-size:.66rem; letter-spacing:.26em; text-transform:uppercase; color:var(--cromo-tx); }
+.card-modelo{ font-family:var(--f-display); font-weight:700; font-size:1.25rem; text-transform:uppercase; letter-spacing:.03em; margin-top:2px; }
+.card-specs{
+  display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px;
+  font-family:var(--f-mono); font-size:.72rem; color:var(--cromo-tx);
+  font-variant-numeric:tabular-nums;
+}
+.card-precos{ display:flex; align-items:baseline; gap:14px; margin-top:14px; border-top:1px solid var(--cromo); padding-top:12px; }
+.card-preco{ font-family:var(--f-mono); font-size:1.05rem; color:var(--farol); font-variant-numeric:tabular-nums; }
+.card-diaria{ font-family:var(--f-mono); font-size:.72rem; color:var(--sodio); font-variant-numeric:tabular-nums; }
+
+@media (hover:hover) and (pointer:fine){
+  .card-specs{ opacity:0; transform:translateY(6px); transition:opacity .25s ease, transform .25s ease; }
+  .card:hover{
+    transform:translateY(-4px); background:var(--grafite-2);
+    box-shadow:0 18px 40px -18px rgba(0,0,0,.8), 0 0 0 1px rgba(232,161,61,.25);
+  }
+  .card:hover .card-media img{ transform:scale(1.02); }
+  .card:hover .card-specs,
+  .card:focus-visible .card-specs{ opacity:1; transform:translateY(0); }
+}
+
+/* Entrada dos cards — reversível; stagger via delay inline */
+body.js-motion .card{ opacity:0; }
+body.js-motion .card:nth-child(odd){ transform:translateY(48px); }
+body.js-motion .card:nth-child(even){ transform:scale(.92); }
+body.js-motion .card{
+  transition:opacity .6s cubic-bezier(.22,.8,.3,1), transform .6s cubic-bezier(.22,.8,.3,1),
+             box-shadow .25s ease, background .25s ease;
+}
+body.js-motion .card.is-in{ opacity:1; transform:none; }
+body.js-motion .sec-head{
+  opacity:0; transform:translateY(40px);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.22,.8,.3,1);
+}
+body.js-motion .sec-head.is-in{ opacity:1; transform:none; }
+
+/* ------------------------------------------------------------
+   TRILHO HORIZONTAL do estoque na home (desktop + motor ativo).
+   body.estoque-h é ligado/desligado pelo JS (medir()). O
+   deslocamento do trilho e o "in" de cada card são função pura
+   do progresso do scroll — reversível como o resto da página.
+   ------------------------------------------------------------ */
+body.estoque-h [data-view='home'] .estoque-pin{
+  position:sticky; top:0; height:100vh; height:100svh;
+  display:flex; align-items:center; overflow:hidden;
+}
+body.estoque-h [data-view='home'] .estoque-conteudo{
+  max-width:none; width:100%;
+  padding-top:0; padding-bottom:0;
+}
+body.estoque-h [data-view='home'] .sec-head{
+  max-width:1360px; margin:0 auto clamp(24px,4vh,44px);
+}
+body.estoque-h [data-view='home'] .grid-carros{
+  display:flex; gap:clamp(16px,2vw,28px);
+  width:max-content; will-change:transform;
+}
+body.estoque-h [data-view='home'] .grid-carros .card{
+  flex:0 0 clamp(440px, 34vw, 520px);
+  /* --in (0→1) vem do rAF; o hover soma o lift por cima via calc */
+  opacity:calc(.25 + .75 * var(--in, 1));
+  transform:translateY(calc((1 - var(--in, 1)) * 46px));
+  transition:box-shadow .25s ease, background .25s ease;
+}
+@media (hover:hover) and (pointer:fine){
+  body.estoque-h [data-view='home'] .grid-carros .card:hover{
+    transform:translateY(calc((1 - var(--in, 1)) * 46px - 4px));
+  }
+}
+
+/* ============================================================
+   HOME · SEÇÃO 3 — FAROL (assinatura)
+   ============================================================ */
+.sec-farol{ background:#000; }
+.sec-farol .pin-sticky{ background:#000; }
+.farol-contorno{
+  position:absolute; left:50%; top:58%; translate:-50% 0;
+  width:min(70vw,720px); height:1px;
+  background:linear-gradient(90deg, transparent, rgba(159,196,222,.35), transparent);
+  opacity:.5; pointer-events:none;
+}
+.farol-bloom{
+  position:absolute; left:50%; top:50%;
+  width:60vmin; height:60vmin;
+  transform:translate(-50%,-50%) scale(.4);
+  border-radius:50%;
+  background:radial-gradient(circle,
+      rgba(237,241,244,.95) 0%, rgba(159,196,222,.55) 22%,
+      rgba(232,161,61,.20) 46%, transparent 70%);
+  filter:blur(6px); opacity:0; pointer-events:none;
+  will-change:transform,opacity; mix-blend-mode:screen;
+}
+.farol-texto{
+  position:absolute; inset:auto 0 0 0; z-index:3;
+  padding:0 clamp(16px,5vw,64px) clamp(80px,14vh,140px);
+  max-width:900px; margin:0 auto; text-align:center;
+  opacity:0; pointer-events:none;
+}
+.farol-texto h2{ font-size:clamp(1.6rem,4.5vw,3rem); }
+.farol-texto p{ color:var(--xenon); font-family:var(--f-mono); font-size:.8rem; letter-spacing:.2em; text-transform:uppercase; margin-top:12px; }
+.farol-overlay{ position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; z-index:2; }
+
+/* ============================================================
+   HOME · SEÇÃO 4 — blocos revelados
+   ============================================================ */
+.sec-blocos{
+  /* largura TOTAL da página: o fundo e os lumens varrem a viewport
+     inteira; só o conteúdo fica na coluna central (.blocos-inner) */
+  position:relative; overflow:hidden;
+  padding:clamp(110px,16vh,220px) 0;
+}
+.blocos-inner{
+  max-width:1280px; margin:0 auto;
+  padding:0 clamp(16px,5vw,64px);
+}
+/* Lumens: pontos de luz sódio/xenon que ACENDEM conforme o scroll
+   percorre os serviços (ignição derivada do progresso — reversível)
+   e flutuam devagar em deriva contínua via CSS. */
+.lumens{ position:absolute; inset:0; pointer-events:none; }
+.lumen{
+  position:absolute; border-radius:50%;
+  opacity:0; will-change:transform,opacity;
+  filter:blur(26px); mix-blend-mode:screen;
+}
+.lumen i{
+  display:block; width:100%; height:100%; border-radius:50%;
+  /* duas animações contínuas: deriva (transform) + pulso (opacity),
+     com durações independentes definidas inline por lumen */
+  animation:lumenFlutua ease-in-out infinite alternate,
+            lumenPulsa ease-in-out infinite alternate;
+}
+.lumen--sodio i{ background:radial-gradient(circle, rgba(232,161,61,.5), transparent 70%); }
+.lumen--xenon i{ background:radial-gradient(circle, rgba(159,196,222,.4), transparent 70%); }
+@keyframes lumenFlutua{
+  from{ transform:translate(0,0); }
+  to{ transform:translate(7%,-9%); }
+}
+@keyframes lumenPulsa{
+  from{ opacity:.62; }
+  to{ opacity:1; }
+}
+.bloco{ position:relative; z-index:1; }
+body.sem-motion .lumens{ display:none; }
+.bloco{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:clamp(36px,6vw,96px); align-items:center;
+  padding:clamp(72px,13vh,150px) 0; border-bottom:1px solid var(--cromo);
+}
+.bloco:first-child{ padding-top:0; }
+.bloco:last-child{ padding-bottom:0; }
+.bloco:last-child{ border-bottom:0; }
+.bloco:nth-child(even) .bloco-img{ order:2; }
+.bloco-img{
+  aspect-ratio:4/3; border-radius:6px; overflow:hidden; border:1px solid var(--cromo);
+  background:
+    radial-gradient(100% 80% at 30% 100%, rgba(232,161,61,.14), transparent 60%),
+    linear-gradient(150deg, #1B212A, #0E1218 75%);
+  display:grid; place-items:center; will-change:transform,opacity;
+}
+.bloco-img span{ font-family:var(--f-mono); font-size:.68rem; letter-spacing:.3em; text-transform:uppercase; color:var(--cromo); }
+.bloco-img img{ width:100%; height:100%; object-fit:cover; }
+.bloco-txt h3{ font-family:var(--f-display); font-weight:700; text-transform:uppercase; font-size:clamp(1.4rem,3vw,2.1rem); letter-spacing:.02em; margin-top:10px; }
+.bloco-txt p{ color:var(--cromo-tx); margin-top:14px; max-width:46ch; }
+.bloco-stat{ font-family:var(--f-mono); font-variant-numeric:tabular-nums; color:var(--sodio); font-size:clamp(1.6rem,3vw,2.2rem); margin-top:18px; }
+.bloco-stat small{ display:block; font-size:.68rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cromo-tx); margin-top:4px; }
+.bloco-cta{
+  display:inline-flex; align-items:center; min-height:44px;
+  margin-top:22px; padding:0 22px;
+  font-family:var(--f-mono); font-size:.74rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--sodio); text-decoration:none; border:1px solid var(--sodio); border-radius:3px;
+  transition:background .25s ease, color .25s ease;
+}
+.bloco-cta:hover{ background:var(--sodio); color:var(--asfalto); }
+body.js-motion .bloco-img,
+body.js-motion .bloco-txt > *{ will-change:transform,opacity; }
+
+/* ============================================================
+   HOME · SEÇÃO 5 — locação (CTA duplo)
+   ============================================================ */
+.sec-locacao{
+  padding:clamp(80px,12vh,160px) clamp(16px,5vw,64px);
+  background:linear-gradient(to bottom, var(--asfalto), #090B0E);
+  border-top:1px solid var(--cromo);
+}
+.locacao-inner{ max-width:900px; margin:0 auto; text-align:center; }
+.locacao-inner h2{ font-size:clamp(1.8rem,4.5vw,3rem); margin-top:12px; }
+.locacao-caminhos{ display:flex; gap:14px; justify-content:center; margin-top:32px; flex-wrap:wrap; }
+.caminho{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:52px; padding:0 34px; border-radius:4px;
+  font-family:var(--f-display); font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; font-size:.95rem; text-decoration:none;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.caminho--comprar{ background:var(--sodio); color:var(--asfalto); }
+.caminho--alugar{ border:1px solid var(--farol); color:var(--farol); }
+.caminho:hover{ transform:translateY(-2px); box-shadow:0 12px 28px -12px rgba(232,161,61,.5); }
+
+/* ============================================================
+   HOME · SEÇÃO 6 — finale da logo
+   ============================================================ */
+.sec-finale{ background:#000; }
+.sec-finale .pin-sticky{ background:#000; display:grid; place-items:center; }
+.finale-inner{ text-align:center; padding:0 24px; }
+.finale-logo-wrap{ position:relative; overflow:hidden; display:inline-block; }
+.finale-logo-wrap img{ width:min(72vw, 640px); height:auto; will-change:transform,opacity,filter; }
+body.js-motion .finale-logo-wrap img{ opacity:0; } /* rAF assume no 1º frame */
+.finale-sweep{
+  position:absolute; top:-20%; bottom:-20%; left:0; width:18%;
+  background:linear-gradient(100deg, transparent, rgba(237,241,244,.35) 45%, rgba(159,196,222,.5) 50%, rgba(237,241,244,.35) 55%, transparent);
+  transform:translateX(-140%) skewX(-12deg);
+  opacity:0; pointer-events:none; mix-blend-mode:screen; will-change:transform,opacity;
+}
+.finale-tag{
+  margin-top:28px; font-family:var(--f-mono); font-size:.72rem; letter-spacing:.34em;
+  text-transform:uppercase; color:var(--cromo-tx); opacity:0; will-change:transform,opacity;
+}
+
+/* ============================================================
+   PÁGINAS INTERNAS
+   ============================================================ */
+.pagina{ min-height:100vh; }
+.pagina-corpo{
+  max-width:1360px; margin:0 auto;
+  padding:clamp(96px,14vh,150px) clamp(16px,5vw,64px) clamp(80px,10vh,120px);
+}
+.pagina-head{ margin-bottom:clamp(32px,5vh,56px); }
+.pagina-head h1, .pagina-head h2{ font-size:clamp(1.8rem,4.5vw,3.2rem); margin-top:10px; }
+.pagina-head p{ color:var(--cromo-tx); max-width:52ch; margin-top:10px; }
+
+/* --- Estoque: destaque de página inteira (carro mais caro) --- */
+.destaque-hero{
+  position:relative; min-height:100vh; min-height:100svh;
+  display:flex; align-items:flex-end; overflow:hidden;
+}
+.destaque-bg{
+  position:absolute; inset:0; overflow:hidden;
+  background:
+    radial-gradient(140% 100% at 50% 115%, rgba(232,161,61,.22), transparent 55%),
+    radial-gradient(60% 50% at 80% 20%, rgba(159,196,222,.08), transparent 70%),
+    linear-gradient(165deg, #1A2029, #0A0D12 70%);
+}
+.destaque-bg img{ width:100%; height:100%; object-fit:cover; }
+.destaque-bg .marca-agua{
+  position:absolute; inset:0; display:grid; place-items:start center;
+  padding-top:16vh;
+  font-family:var(--f-display); font-weight:800; text-transform:uppercase;
+  font-size:clamp(4rem,13vw,12rem); letter-spacing:.04em;
+  color:rgba(237,241,244,.045); white-space:nowrap; user-select:none;
+}
+.destaque-scrim{
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(12,14,18,.92) 0%, rgba(12,14,18,.35) 45%, transparent 75%);
+  pointer-events:none;
+}
+.destaque-info{
+  position:relative; z-index:2; width:100%;
+  max-width:1360px; margin:0 auto;
+  padding:0 clamp(16px,5vw,64px) clamp(96px,14vh,150px);
+}
+.destaque-marca{ font-family:var(--f-mono); font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:var(--cromo-tx); margin-top:14px; }
+.destaque-titulo{ font-size:clamp(2.6rem,7.5vw,5.6rem); max-width:14ch; }
+.destaque-specs{
+  display:flex; flex-wrap:wrap; gap:6px 22px; margin-top:18px;
+  font-family:var(--f-mono); font-size:.78rem; color:var(--cromo-tx);
+  font-variant-numeric:tabular-nums;
+}
+.destaque-preco-row{ display:flex; align-items:baseline; gap:18px; margin-top:22px; flex-wrap:wrap; }
+.destaque-preco{ font-family:var(--f-mono); font-size:clamp(1.4rem,3vw,2rem); color:var(--farol); font-variant-numeric:tabular-nums; }
+.destaque-diaria{ font-family:var(--f-mono); font-size:.85rem; color:var(--sodio); font-variant-numeric:tabular-nums; }
+.destaque-ctas{ display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; }
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:48px; padding:0 26px; border-radius:4px; text-decoration:none;
+  font-family:var(--f-display); font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; font-size:.85rem;
+  transition:transform .2s ease, box-shadow .2s ease, background .25s ease, color .25s ease;
+}
+.btn--cheio{ background:var(--sodio); color:var(--asfalto); }
+.btn--linha{ border:1px solid var(--farol); color:var(--farol); }
+.btn:hover{ transform:translateY(-2px); box-shadow:0 12px 28px -12px rgba(232,161,61,.5); }
+
+/* --- Estoque: sistema de filtragem --- */
+.filtros{
+  background:var(--grafite); border:1px solid var(--cromo); border-radius:6px;
+  padding:clamp(14px,2vw,22px); margin-bottom:clamp(20px,3vh,32px);
+  display:grid; gap:12px;
+}
+.filtros-busca{ position:relative; }
+.filtros-busca input{
+  width:100%; min-height:46px; padding:0 46px 0 14px; border-radius:4px;
+  background:var(--asfalto); border:1px solid var(--cromo);
+  color:var(--farol); font-family:var(--f-body); font-size:.95rem;
+}
+.filtros-busca input::placeholder{ color:var(--cromo-tx); }
+.filtros-busca svg{
+  position:absolute; right:14px; top:50%; translate:0 -50%;
+  width:18px; height:18px; stroke:var(--cromo-tx); fill:none; stroke-width:2;
+  pointer-events:none;
+}
+.filtros-grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.campo-l{
+  display:flex; flex-direction:column; gap:6px;
+  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--cromo-tx); min-width:0;
+}
+.campo-l select, .campo-l input{
+  min-height:42px; padding:0 12px; border-radius:4px; width:100%;
+  background:var(--asfalto); border:1px solid var(--cromo);
+  color:var(--farol); font-family:var(--f-body); font-size:.9rem;
+}
+.faixa{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.filtros-toggle{
+  justify-self:center; background:none; border:0; cursor:pointer;
+  min-height:44px; padding:0 16px; color:var(--sodio);
+  font-family:var(--f-mono); font-size:.72rem; letter-spacing:.24em;
+  text-transform:uppercase;
+}
+.filtros-toggle .seta{ margin-left:6px; }
+.filtros-avancada{
+  display:grid; gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  border-top:1px solid var(--cromo); padding-top:14px;
+}
+.filtros-resultado{
+  font-family:var(--f-mono); font-size:.7rem; color:var(--cromo-tx);
+  letter-spacing:.14em; text-transform:uppercase; margin-top:8px;
+  font-variant-numeric:tabular-nums;
+}
+.filtros-vazio{
+  grid-column:1/-1; border:1px dashed var(--cromo); border-radius:6px;
+  padding:44px 20px; text-align:center; color:var(--cromo-tx);
+}
+.filtros-vazio .bloco-cta{ margin-top:16px; cursor:pointer; background:none; font-size:.74rem; }
+
+/* --- Alugue / Contato --- */
+.form-visual{
+  margin-top:40px; text-align:left;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px;
+  background:var(--grafite); border:1px solid var(--cromo);
+  border-radius:6px; padding:clamp(18px,3vw,32px);
+}
+.form-visual label{
+  display:flex; flex-direction:column; gap:6px;
+  font-family:var(--f-mono); font-size:.66rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--cromo-tx);
+}
+.form-visual input, .form-visual select, .form-visual textarea{
+  min-height:44px; padding:10px 12px; border-radius:3px;
+  background:var(--asfalto); border:1px solid var(--cromo);
+  color:var(--farol); font-family:var(--f-body); font-size:.95rem;
+}
+.form-visual textarea{ min-height:110px; resize:vertical; grid-column:1/-1; }
+.form-visual .campo-msg{ grid-column:1/-1; }
+.form-visual button{
+  grid-column:1/-1; min-height:48px; border:0; border-radius:3px;
+  background:var(--sodio); color:var(--asfalto); cursor:pointer;
+  font-family:var(--f-display); font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; font-size:.9rem;
+}
+.info-grid{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+.info-card{
+  background:var(--grafite); border:1px solid var(--cromo); border-radius:6px;
+  padding:24px;
+}
+.info-card .eyebrow{ color:var(--cromo-tx); }
+.info-card p{ margin-top:10px; font-family:var(--f-mono); font-size:.92rem; }
+.grid-titulo{ margin:clamp(40px,7vh,72px) 0 20px; }
+.grid-titulo h2{ font-size:clamp(1.3rem,3vw,1.9rem); }
+
+.site-footer{
+  padding:44px clamp(16px,5vw,64px) 36px;
+  border-top:1px solid var(--cromo); background:#000;
+}
+.footer-cta{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:20px; flex-wrap:wrap;
+  padding-bottom:30px; margin-bottom:26px;
+  border-bottom:1px solid var(--cromo);
+}
+.footer-sociais{ display:flex; gap:10px; }
+.social{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid var(--cromo); color:var(--cromo-tx);
+  transition:color .25s ease, border-color .25s ease, transform .2s ease;
+}
+.social svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.social:hover{ color:var(--sodio); border-color:var(--sodio); transform:translateY(-2px); }
+.footer-base{
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-family:var(--f-mono); font-size:.68rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--cromo);
+}
+.poster-estatico{ display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width:900px){
+  .bloco{ grid-template-columns:1fr; }
+  .bloco:nth-child(even) .bloco-img{ order:0; }
+}
+@media (max-width:700px){
+  :root{ --pin-h:200vh; --pin-h-finale:160vh; }
+  /* header em duas linhas: [logo ......... idioma] / [navegação] —
+     numa linha só, logo + 3 links + 3 botões estouram os 360px */
+  .site-header{ flex-wrap:wrap; padding-bottom:0; }
+  .header-dir{ display:contents; } /* solta nav e idioma direto no flex do header */
+  .logo-link{ order:1; }
+  .logo-link img{ height:22px; }
+  .lang{ order:2; margin-left:auto; }
+  .lang button{ min-width:34px; padding:0 7px; }
+  .nav{
+    order:3; width:100%;
+    justify-content:space-between;
+  }
+  .nav a{ padding:0 6px; font-size:.66rem; letter-spacing:.1em; }
+}
+@media (max-width:380px){
+  .nav a{ letter-spacing:.06em; font-size:.62rem; }
+}
+@media (max-width:400px){ .hero-titulo{ font-size:2.1rem; } }
+
+/* ============================================================
+   DESKTOP (≥1000px): filtros em barra, contato em duas colunas
+   ============================================================ */
+@media (min-width:1000px){
+  /* cards maiores: colunas de no mínimo 350px (3 por linha a 1360px) */
+  .grid-carros{ grid-template-columns:repeat(auto-fill, minmax(350px,1fr)); }
+  .card-modelo{ font-size:1.4rem; }
+  .card-body{ padding:18px 20px 20px; }
+
+  /* filtros deixam a pilha mobile e viram toolbar em colunas */
+  .filtros{ grid-template-columns:repeat(4, 1fr); align-items:end; }
+  .filtros-busca{ grid-column:1 / -1; }
+  .filtros-grid-2{ display:contents; } /* os 4 selects viram colunas da barra */
+  .filtros-toggle{ grid-column:1 / -1; }
+  .filtros-avancada{ grid-column:1 / -1; grid-template-columns:repeat(5, 1fr); }
+
+  /* título do grid e contador de resultados na mesma linha */
+  .grid-titulo{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; }
+  .grid-titulo .filtros-resultado{ margin-top:0; }
+
+  /* contato: cards de informação à esquerda, formulário à direita */
+  .contato-grid{
+    display:grid; grid-template-columns:1fr 1.6fr;
+    gap:clamp(20px,3vw,44px); align-items:start;
+  }
+  .contato-grid .info-grid{ grid-template-columns:1fr; }
+  .contato-grid .form-visual{ margin-top:0; }
+}
+
+/* ============================================================
+   MODO SEM MOVIMENTO — ativado via body.sem-motion quando o SO
+   pede prefers-reduced-motion. Layout estático, MAS com os posters
+   compondo a tela inteira. O botão .chip-motion permite opt-in.
+   ============================================================ */
+body.sem-motion *{ animation:none !important; transition:none !important; }
+body.sem-motion .pin-wrap{ height:auto !important; }
+body.sem-motion .pin-sticky{ position:relative; height:auto; min-height:100vh; min-height:100svh; }
+body.sem-motion .hero-midia video, body.sem-motion .hero-midia canvas,
+body.sem-motion .farol-midia video, body.sem-motion .farol-midia canvas{ display:none; }
+body.sem-motion .poster-estatico{ display:block; position:absolute; inset:0; z-index:0; }
+body.sem-motion .hero-overlay{
+  opacity:1;
+  background:linear-gradient(to top, rgba(12,14,18,.92), rgba(12,14,18,.2) 55%, transparent);
+}
+body.sem-motion .farol-texto{ opacity:1; }
+body.sem-motion .farol-overlay, body.sem-motion .farol-bloom,
+body.sem-motion .farol-contorno, body.sem-motion .finale-sweep{ display:none; }
+body.sem-motion .sec-finale .pin-sticky{ min-height:60vh; padding:80px 0; }
+body.sem-motion .finale-tag{ opacity:1; }
+
+.barra-acao{
+  position:fixed; left:0; right:0; bottom:0; z-index:45;
+  display:flex; align-items:center; justify-content:center;
+  gap:clamp(10px,2vw,16px);
+  padding:10px clamp(12px,4vw,24px);
+  padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+  background:rgba(12,14,18,.9);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border-top:1px solid var(--cromo);
+  transform:translateY(110%);
+  transition:transform .45s cubic-bezier(.22,.8,.3,1);
+}
+.barra-acao.visivel{ transform:translateY(0); }
+.barra-acao .btn{ min-height:44px; padding:0 clamp(18px,3vw,30px); font-size:.8rem; }
+.barra-contato{
+  display:inline-flex; align-items:center; min-height:44px; padding:0 14px;
+  font-family:var(--f-mono); font-size:.72rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--cromo-tx); text-decoration:none;
+  transition:color .25s ease;
+}
+.barra-contato:hover{ color:var(--sodio); }
+/* a barra só existe na home; nas outras rotas há CTAs próprios */
+body:not([data-rota="home"]) .barra-acao{ display:none; }
+/* sem motor (reduzir animações): visível direto, sem gatilho de scroll */
+body.sem-motion .barra-acao{ transform:translateY(0); }
+/* o rodapé ganha respiro para a barra não cobrir o conteúdo final */
+body.barra-on .site-footer{ padding-bottom:120px; }
+
+.sec-cta-final{
+  background:linear-gradient(to bottom, var(--asfalto), #000);
+  border-top:1px solid var(--cromo);
+}
+
+.chip-motion{
+  position:fixed; left:16px; bottom:16px; z-index:60;
+  min-height:42px; padding:0 18px; border-radius:999px;
+  background:var(--grafite); border:1px solid var(--sodio); color:var(--sodio);
+  font-family:var(--f-mono); font-size:.66rem; letter-spacing:.18em;
+  text-transform:uppercase; cursor:pointer;
+}
+.chip-motion:hover{ background:rgba(232,161,61,.14); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo-link" href="#/" aria-label="Absolut Motors — home">
+    <img src="./logo-absolut-transparente.png" alt="Absolut Motors"
+         onerror="this.remove();document.getElementById('logoTxt').hidden=false;">
+    <span id="logoTxt" class="logo-fallback" hidden>Absolut&nbsp;Motors</span>
+  </a>
+  <div class="header-dir">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#/estoque" data-rota="estoque" data-txt="nav.estoque"></a>
+      <a href="#/alugue"  data-rota="alugue"  data-txt="nav.alugue"></a>
+      <a href="#/contato" data-rota="contato" data-txt="nav.contato"></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language / Idioma">
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="pt" aria-pressed="false">PT</button>
+      <button type="button" data-lang="es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+</header>
+
+<!-- ======================= VIEW: HOME ======================= -->
+<main class="view" data-view="home">
+
+<section class="pin-wrap" data-pin="hero">
+  <div class="pin-sticky">
+    <div class="hero-midia">
+      <div class="midia-fx" data-fx="hero">
+        <!--
+          ENCODING: para scrub fluido, os MP4 precisam de keyframe a
+          cada ~0,1s e sem áudio:
+            ffmpeg -i in.mp4 -an -c:v libx264 -crf 19 -g 3 -keyint_min 3 \
+                   -sc_threshold 0 -movflags +faststart out.mp4
+          O caminho mais compatível de todos é a SEQUÊNCIA DE FRAMES
+          em <canvas> (CONFIG.midia.*Frames). A lógica "desenhe o frame
+          do progresso X" está isolada em ScrubMedia.render(progress):
+          frames → vídeo → stand-in, mesmo contrato para todos.
+        -->
+        <video data-video="hero" muted playsinline preload="auto"
+               disablepictureinpicture poster="./poster-taycan.jpg"></video>
+        <canvas data-canvas="hero" hidden aria-hidden="true"></canvas>
+      </div>
+      <img class="poster-estatico" src="./poster-taycan.jpg" alt="" aria-hidden="true">
+      <div class="hero-overlay" data-el="heroOverlay"></div>
+      <div class="hero-copy">
+        <div data-el="heroTitulo">
+          <p class="eyebrow" data-txt="hero.eyebrow"></p>
+          <h1 class="display hero-titulo" data-txt="hero.titulo"></h1>
+          <p class="hero-sub" data-txt="hero.sub"></p>
+        </div>
+      </div>
+      <!-- a logo emerge do escuro no fim do hero — mesma linguagem do finale -->
+      <div class="hero-finale" aria-hidden="true">
+        <div class="finale-logo-wrap">
+          <img src="./logo-absolut-transparente.png" alt="" data-el="heroLogoImg">
+          <div class="finale-sweep" data-el="heroLogoSweep"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec-estoque" data-el="secEstoque">
+  <div class="estoque-bg" aria-hidden="true"><img src="./poster-taycan-fim.jpg" alt=""></div>
+  <div class="estoque-pin">
+    <div class="estoque-conteudo" data-el="estoqueConteudo">
+      <header class="sec-head" data-reveal="head">
+        <p class="eyebrow" data-txt="estoque.eyebrow"></p>
+        <h2 class="display" data-txt="estoque.titulo"></h2>
+        <p data-txt="estoque.sub"></p>
+      </header>
+      <div class="grid-carros" data-el="gridCarros"></div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="sec-locacao">
+  <div class="locacao-inner">
+    <p class="eyebrow" data-txt="locacao.eyebrow"></p>
+    <h2 class="display" data-txt="locacao.titulo"></h2>
+    <div class="locacao-caminhos">
+      <a class="caminho caminho--comprar" href="#/estoque" data-txt="locacao.ctaComprar"></a>
+      <a class="caminho caminho--alugar" href="#/alugue" data-txt="locacao.ctaAlugar"></a>
+    </div>
+  </div>
+</section>
+
+<section class="pin-wrap sec-farol" data-pin="farol">
+  <div class="pin-sticky">
+    <div class="farol-midia">
+      <div class="midia-fx" data-fx="farol">
+        <video data-video="farol" muted playsinline preload="auto"
+               disablepictureinpicture poster="./poster-farol.jpg"></video>
+        <canvas data-canvas="farol" hidden aria-hidden="true"></canvas>
+      </div>
+      <img class="poster-estatico" src="./poster-farol.jpg" alt="" aria-hidden="true">
+      <div class="farol-contorno" data-el="farolContorno" aria-hidden="true"></div>
+      <div class="farol-bloom" data-el="farolBloom" aria-hidden="true"></div>
+      <div class="farol-overlay" data-el="farolOverlay"></div>
+      <div class="farol-texto" data-el="farolTexto">
+        <h2 class="display" data-txt="farol.titulo"></h2>
+        <p data-txt="farol.sub"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec-blocos" data-el="blocosWrap"></section>
+
+
+
+<!-- CTA de fechamento: depois dos serviços, com copy própria -->
+<section class="sec-locacao sec-cta-final">
+  <div class="locacao-inner">
+    <p class="eyebrow" data-txt="ctaFinal.eyebrow"></p>
+    <h2 class="display" data-txt="ctaFinal.titulo"></h2>
+    <div class="locacao-caminhos">
+      <a class="caminho caminho--comprar" href="#/estoque" data-txt="ctaFinal.principal"></a>
+      <a class="caminho caminho--alugar" href="#/contato" data-txt="ctaFinal.secundario"></a>
+    </div>
+  </div>
+</section>
+
+<section class="pin-wrap pin-wrap--finale sec-finale" data-finale aria-label="Absolut Motors">
+  <div class="pin-sticky">
+    <div class="finale-inner">
+      <div class="finale-logo-wrap">
+        <img src="./logo-absolut-transparente.png" alt="Absolut Motors" data-f-logo>
+        <div class="finale-sweep" data-f-sweep aria-hidden="true"></div>
+      </div>
+      <p class="finale-tag" data-f-tag data-txt="finale.tag"></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ======================= VIEW: ESTOQUE ======================= -->
+<main class="view pagina" data-view="estoque" hidden>
+  <div data-el="paginaEstoque"><!-- destaque de página inteira + grid --></div>
+</main>
+
+<!-- ======================= VIEW: ALUGUE ======================= -->
+<main class="view pagina" data-view="alugue" hidden>
+  <div data-el="paginaAlugue"></div>
+</main>
+
+<!-- ======================= VIEW: CONTATO ======================= -->
+<main class="view pagina" data-view="contato" hidden>
+  <div data-el="paginaContato"></div>
+</main>
+
+<!-- Barra de ação fixa: aparece após os Selecionados da semana (home)
+     e acompanha o resto da rolagem. Some nas outras rotas. -->
+<div class="barra-acao" data-el="barraAcao" aria-label="Quick actions">
+  <a class="btn btn--cheio" href="#/estoque" data-txt="locacao.ctaComprar"></a>
+  <a class="btn btn--linha" href="#/alugue" data-txt="locacao.ctaAlugar"></a>
+  <a class="barra-contato" href="#/contato" data-txt="nav.contato"></a>
+</div>
+
+<button type="button" id="ativarMotion" class="chip-motion" hidden data-txt="ui.ativarAnimacoes"></button>
+
+<footer class="site-footer">
+  <div class="footer-cta">
+    <a class="btn btn--cheio" href="#/contato" data-txt="ui.faleConosco"></a>
+    <div class="footer-sociais" data-el="sociais" aria-label="Redes sociais"></div>
+  </div>
+  <div class="footer-base">
+    <span data-txt="footer.esq"></span>
+    <span data-txt="footer.dir"></span>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   CONFIG — ÚNICO ponto de conteúdo do site.
+   ================================================================ */
+const CONFIG = {
+
+  marca: { nome: "Absolut Motors", cidade: "Los Angeles · CA" },
+
+  /* Redes sociais do rodapé — TODO: substituir pelas URLs reais.
+     Remova uma linha para tirar a rede do rodapé. */
+  social: {
+    instagram: "https://instagram.com/absolutmotors",
+    facebook:  "https://facebook.com/absolutmotors",
+    whatsapp:  "https://wa.me/13105550134",
+    youtube:   "https://youtube.com/@absolutmotors",
+  },
+  idiomaPadrao: "en",
+
+  midia: {
+    heroVideo:  "./taycan-scrub.mp4",
+    farolVideo: "./farol-scrub.mp4",
+    /* Sequência de frames (modo universal): quando preenchido, tem
+       prioridade sobre o vídeo — sem codec, sem blob, sem gesto. */
+    heroFrames:  [],
+    farolFrames: [],
+  },
+
+  idiomas: {
+    en: {
+      nav: { estoque:"Inventory", alugue:"Rent", contato:"Contact" },
+      ui: {
+        role:"Scroll", destaque:"Featured", porDia:"/day", ativarAnimacoes:"Enable animations", faleConosco:"Contact us", apply:"Apply", connect:"Connect with us",
+        foto:"Photo", imagemBloco:"Image — block",
+        modalidade:{ venda:"For sale", locacao:"Rental", ambos:"Sale · Rental" },
+        specs:{ "Automático":"Automatic", "Manual":"Manual", "Gasolina":"Gasoline",
+                "Elétrico":"Electric", "Híbrido":"Hybrid", "Diesel":"Diesel", "Flex":"Flex-fuel" },
+      },
+      hero: {
+        eyebrow:"Dealership & Rentals — Los Angeles, CA",
+        titulo:"The night belongs to drivers",
+        sub:"Hand-picked premium pre-owned cars — for sale or by subscription. Placeholder copy, final text in phase 2.",
+      },
+      estoque: {
+        eyebrow:"Inventory", titulo:"This week's picks",
+        sub:"Every car clears a 140-point inspection before it reaches the floor. Placeholder copy.",
+      },
+      farol: { titulo:"Find the car that's right for you", sub:"Absolut Motors" },
+      blocos: [
+        { titulo:"Curated, not crowded",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Every unit is chosen, not just received.",
+          cta:"See our standards", statLabel:"point inspection on every car" },
+        { titulo:"Delivery across Southern California",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Covered transport, agreed window, our own logistics.",
+          cta:"How it works", statLabel:"average delivery window" },
+        { titulo:"Subscription without the paperwork",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Digital docs and a fresh car every cycle.",
+          cta:"Get a quote", statLabel:"contract renewal rate" },
+        { titulo:"Service that picks up the phone",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scheduled maintenance and a human on the line.",
+          cta:"Talk to service", statLabel:"" },
+      ],
+      locacao: {
+        eyebrow:"Two ways in", titulo:"Buy it — or drive it by subscription",
+        ctaComprar:"Buy", ctaAlugar:"Rent",
+        form:{ retirada:"Pick-up", devolucao:"Return", categoria:"Category",
+               cat1:"SUV", cat2:"Sedan", cat3:"Sports", botao:"Check availability" },
+      },
+      paginas: {
+        estoque:{
+          flagship:"Top of the line", ctaDetalhes:"Request details", ctaTest:"Book a test drive",
+          gridTitulo:"Full inventory", seta:"Explore",
+          filtros:{
+            buscar:"Search brand, model…", marca:"Brand", todasMarcas:"All brands",
+            modelo:"Model", todosModelos:"All models",
+            ordenar:"Sort by", ordDestaque:"Featured first", ordMenor:"Lowest price",
+            ordMaior:"Highest price", ordNovo:"Newest year", ordKm:"Lowest mileage",
+            modalidade:"Availability", qualquer:"Any",
+            avancada:"Advanced search", preco:"Price (USD)", de:"From", ate:"To",
+            combustivel:"Fuel", cambio:"Transmission",
+            milhas:"Mileage (mi)", ano:"Year",
+            resultados:"cars found", umResultado:"car found",
+            vazio:"No cars match these filters.", limpar:"Clear filters",
+          },
+        },
+        alugue:{
+          eyebrow:"Rentals", titulo:"Drive it by subscription",
+          sub:"Pick up in Los Angeles or get it delivered. Daily rates below — placeholder copy.",
+          gridTitulo:"Available for rental",
+        },
+        contato:{
+          eyebrow:"Contact", titulo:"Talk to Absolut",
+          sub:"A human answers. Placeholder copy.",
+          endereco:"Showroom", enderecoTxt:"8800 Sunset Blvd — Los Angeles, CA",
+          telefone:"Phone", telefoneTxt:"+1 (310) 555-0134",
+          horario:"Hours", horarioTxt:"Mon–Sat · 9am–7pm",
+          form:{ nome:"Name", email:"Email", msg:"Message", botao:"Send message" },
+        },
+      },
+      ctaFinal: {
+        eyebrow:"The next step",
+        titulo:"You've seen the cars. Now drive one.",
+        principal:"See full inventory", secundario:"Talk to a specialist",
+      },
+      finale: { tag:"Los Angeles · California — see you on the road" },
+      footer: { esq:"Absolut Motors — Los Angeles, CA", dir:"Phase 1 · motion prototype" },
+    },
+
+    pt: {
+      nav: { estoque:"Estoque", alugue:"Alugue", contato:"Contato" },
+      ui: {
+        role:"Role", destaque:"Destaque", porDia:"/dia", ativarAnimacoes:"Ativar anima\u00e7\u00f5es", faleConosco:"Fale conosco", apply:"Aplicar", connect:"Fale com a gente",
+        foto:"Foto", imagemBloco:"Imagem — bloco",
+        modalidade:{ venda:"Venda", locacao:"Locação", ambos:"Venda · Locação" },
+        specs:{ "Automático":"Automático", "Manual":"Manual", "Gasolina":"Gasolina",
+                "Elétrico":"Elétrico", "Híbrido":"Híbrido", "Diesel":"Diesel", "Flex":"Flex" },
+      },
+      hero: {
+        eyebrow:"Concessionária & Locação — Los Angeles, CA",
+        titulo:"A noite pertence a quem dirige",
+        sub:"Seminovos premium selecionados a dedo — para compra ou por assinatura. Texto provisório, copy final na fase 2.",
+      },
+      estoque: {
+        eyebrow:"Estoque", titulo:"Selecionados desta semana",
+        sub:"Cada carro passa por inspeção de 140 itens antes de entrar na vitrine. Texto provisório.",
+      },
+      farol: { titulo:"Encontre o carro ideal para voc\u00ea", sub:"Absolut Motors" },
+      blocos: [
+        { titulo:"Curadoria, não volume",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cada unidade entra por escolha, não por chegada.",
+          cta:"Ver critérios", statLabel:"itens de inspeção por carro" },
+        { titulo:"Entrega em todo o sul da Califórnia",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Transporte coberto, janela combinada, logística própria.",
+          cta:"Como funciona", statLabel:"janela média de entrega" },
+        { titulo:"Assinatura sem burocracia",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Documentação digital e carro novo a cada ciclo.",
+          cta:"Pedir cotação", statLabel:"renovação de contratos" },
+        { titulo:"Pós-venda que atende de verdade",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Revisões agendadas e um humano do outro lado da linha.",
+          cta:"Falar com a oficina", statLabel:"" },
+      ],
+      locacao: {
+        eyebrow:"Dois caminhos", titulo:"Comprar — ou dirigir por assinatura",
+        ctaComprar:"Comprar", ctaAlugar:"Alugar",
+        form:{ retirada:"Retirada", devolucao:"Devolução", categoria:"Categoria",
+               cat1:"SUV", cat2:"Sedã", cat3:"Esportivo", botao:"Ver disponibilidade" },
+      },
+      paginas: {
+        estoque:{
+          flagship:"O topo da linha", ctaDetalhes:"Pedir detalhes", ctaTest:"Agendar test drive",
+          gridTitulo:"Estoque completo", seta:"Explorar",
+          filtros:{
+            buscar:"Buscar por marca, modelo…", marca:"Marca", todasMarcas:"Todas as marcas",
+            modelo:"Modelo", todosModelos:"Todos os modelos",
+            ordenar:"Ordenar por", ordDestaque:"Destaques primeiro", ordMenor:"Menor preço",
+            ordMaior:"Maior preço", ordNovo:"Ano mais novo", ordKm:"Menos milhas",
+            modalidade:"Disponibilidade", qualquer:"Qualquer",
+            avancada:"Busca avançada", preco:"Preço (USD)", de:"De", ate:"Até",
+            combustivel:"Combustível", cambio:"Câmbio",
+            milhas:"Milhagem (mi)", ano:"Ano",
+            resultados:"carros encontrados", umResultado:"carro encontrado",
+            vazio:"Nenhum carro corresponde a esses filtros.", limpar:"Limpar filtros",
+          },
+        },
+        alugue:{
+          eyebrow:"Locação", titulo:"Dirija por assinatura",
+          sub:"Retire em Los Angeles ou receba em casa. Diárias abaixo — texto provisório.",
+          gridTitulo:"Disponíveis para locação",
+        },
+        contato:{
+          eyebrow:"Contato", titulo:"Fale com a Absolut",
+          sub:"Um humano atende. Texto provisório.",
+          endereco:"Showroom", enderecoTxt:"8800 Sunset Blvd — Los Angeles, CA",
+          telefone:"Telefone", telefoneTxt:"+1 (310) 555-0134",
+          horario:"Horário", horarioTxt:"Seg–Sáb · 9h–19h",
+          form:{ nome:"Nome", email:"E-mail", msg:"Mensagem", botao:"Enviar mensagem" },
+        },
+      },
+      ctaFinal: {
+        eyebrow:"O pr\u00f3ximo passo",
+        titulo:"Voc\u00ea viu os carros. Agora dirija um.",
+        principal:"Ver estoque completo", secundario:"Falar com um especialista",
+      },
+      finale: { tag:"Los Angeles · Calif\u00f3rnia — nos vemos na estrada" },
+      footer: { esq:"Absolut Motors — Los Angeles, CA", dir:"Fase 1 · protótipo de animação" },
+    },
+
+    es: {
+      nav: { estoque:"Inventario", alugue:"Alquila", contato:"Contacto" },
+      ui: {
+        role:"Desliza", destaque:"Destacado", porDia:"/día", ativarAnimacoes:"Activar animaciones", faleConosco:"Habla con nosotros", apply:"Aplicar", connect:"Habla con nosotros",
+        foto:"Foto", imagemBloco:"Imagen — bloque",
+        modalidade:{ venda:"Venta", locacao:"Alquiler", ambos:"Venta · Alquiler" },
+        specs:{ "Automático":"Automático", "Manual":"Manual", "Gasolina":"Gasolina",
+                "Elétrico":"Eléctrico", "Híbrido":"Híbrido", "Diesel":"Diésel", "Flex":"Flex" },
+      },
+      hero: {
+        eyebrow:"Concesionario y Alquiler — Los Ángeles, CA",
+        titulo:"La noche pertenece a quien conduce",
+        sub:"Seminuevos premium seleccionados a mano — en venta o por suscripción. Texto provisional, copy final en fase 2.",
+      },
+      estoque: {
+        eyebrow:"Inventario", titulo:"Selección de esta semana",
+        sub:"Cada auto pasa una inspección de 140 puntos antes de llegar al piso. Texto provisional.",
+      },
+      farol: { titulo:"Encuentra el auto ideal para ti", sub:"Absolut Motors" },
+      blocos: [
+        { titulo:"Curaduría, no volumen",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cada unidad entra por elección, no por llegada.",
+          cta:"Ver criterios", statLabel:"puntos de inspección por auto" },
+        { titulo:"Entrega en todo el sur de California",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Transporte cubierto, ventana acordada, logística propia.",
+          cta:"Cómo funciona", statLabel:"ventana media de entrega" },
+        { titulo:"Suscripción sin papeleo",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Documentación digital y auto nuevo en cada ciclo.",
+          cta:"Pedir cotización", statLabel:"renovación de contratos" },
+        { titulo:"Posventa que contesta el teléfono",
+          texto:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mantenimiento programado y un humano al otro lado.",
+          cta:"Hablar con el taller", statLabel:"" },
+      ],
+      locacao: {
+        eyebrow:"Dos caminos", titulo:"Cómpralo — o condúcelo por suscripción",
+        ctaComprar:"Comprar", ctaAlugar:"Alquilar",
+        form:{ retirada:"Recogida", devolucao:"Devolución", categoria:"Categoría",
+               cat1:"SUV", cat2:"Sedán", cat3:"Deportivo", botao:"Ver disponibilidad" },
+      },
+      paginas: {
+        estoque:{
+          flagship:"Lo más alto de la gama", ctaDetalhes:"Pedir detalles", ctaTest:"Agendar prueba de manejo",
+          gridTitulo:"Inventario completo", seta:"Explorar",
+          filtros:{
+            buscar:"Buscar por marca, modelo…", marca:"Marca", todasMarcas:"Todas las marcas",
+            modelo:"Modelo", todosModelos:"Todos los modelos",
+            ordenar:"Ordenar por", ordDestaque:"Destacados primero", ordMenor:"Menor precio",
+            ordMaior:"Mayor precio", ordNovo:"Año más nuevo", ordKm:"Menos millas",
+            modalidade:"Disponibilidad", qualquer:"Cualquiera",
+            avancada:"Búsqueda avanzada", preco:"Precio (USD)", de:"Desde", ate:"Hasta",
+            combustivel:"Combustible", cambio:"Transmisión",
+            milhas:"Millaje (mi)", ano:"Año",
+            resultados:"autos encontrados", umResultado:"auto encontrado",
+            vazio:"Ningún auto coincide con estos filtros.", limpar:"Limpiar filtros",
+          },
+        },
+        alugue:{
+          eyebrow:"Alquiler", titulo:"Condúcelo por suscripción",
+          sub:"Recógelo en Los Ángeles o recíbelo en casa. Tarifas diarias abajo — texto provisional.",
+          gridTitulo:"Disponibles para alquiler",
+        },
+        contato:{
+          eyebrow:"Contacto", titulo:"Habla con Absolut",
+          sub:"Un humano contesta. Texto provisional.",
+          endereco:"Showroom", enderecoTxt:"8800 Sunset Blvd — Los Ángeles, CA",
+          telefone:"Teléfono", telefoneTxt:"+1 (310) 555-0134",
+          horario:"Horario", horarioTxt:"Lun–Sáb · 9am–7pm",
+          form:{ nome:"Nombre", email:"Email", msg:"Mensaje", botao:"Enviar mensaje" },
+        },
+      },
+      ctaFinal: {
+        eyebrow:"El siguiente paso",
+        titulo:"Ya viste los autos. Ahora maneja uno.",
+        principal:"Ver inventario completo", secundario:"Hablar con un especialista",
+      },
+      finale: { tag:"Los Ángeles · California — nos vemos en la carretera" },
+      footer: { esq:"Absolut Motors — Los Ángeles, CA", dir:"Fase 1 · prototipo de animación" },
+    },
+  },
+
+  /* Imagens dos blocos da Seção 4, na ordem dos blocos.
+     null = mantém o placeholder até a foto chegar. */
+  blocosImagens: [
+    "./bloco-curadoria.jpg",  // 1 · curadoria — motor BMW M
+    "./bloco-entrega.jpg",    // 2 · entrega — caminhão Absolut
+    null,                           // 3 · assinatura
+    null,                           // 4 · pós-venda
+  ],
+
+  blocosStats: [
+    { valor:140, sufixo:"" }, { valor:48, sufixo:"h" }, { valor:98, sufixo:"%" }, null,
+  ],
+
+  /* Carros — dólares INTEIROS (89500 = $89,500); precoDiaria idem,
+     null = indisponível para locação. O campo `km` mantém o nome do
+     schema da fase 1, mas o valor está em MILHAS (contexto EUA).
+     `imagem`  = foto principal do card;
+     `imagem2` = segunda foto, revelada no hover do card (opcional);
+     `imagemDestaque` = versão em alta para o hero da página de
+     estoque (opcional; usada quando o carro é o mais caro). */
+  carros: [
+    { id:"car-01", marca:"Ford", modelo:"Focus RS", ano:2017, km:34500,
+      cambio:"Manual", combustivel:"Gasolina", preco:32900, precoDiaria:129,
+      modalidade:"ambos", imagem:"./focus-1.jpg", imagem2:"./focus-2.jpg",
+      destaque:false },
+    { id:"car-02", marca:"Ford", modelo:"Mustang Fastback", ano:1968, km:76400,
+      cambio:"Manual", combustivel:"Gasolina", preco:89500, precoDiaria:null,
+      modalidade:"venda", imagem:"./mustang-1.jpg", imagem2:"./mustang-2.jpg",
+      imagemDestaque:"./mustang-hero.jpg", destaque:true },
+    { id:"car-03", marca:"Land Rover", modelo:"Range Rover Sport SVR", ano:2016, km:41200,
+      cambio:"Automático", combustivel:"Gasolina", preco:64900, precoDiaria:299,
+      modalidade:"ambos", imagem:"./rrsvr-1.jpg", destaque:false },
+    { id:"car-04", marca:"Audi", modelo:"RS3 Sedan", ano:2018, km:28300,
+      cambio:"Automático", combustivel:"Gasolina", preco:45900, precoDiaria:199,
+      modalidade:"ambos", imagem:"./rs3-1.jpg", imagem2:"./rs3-2.jpg",
+      destaque:true },
+    { id:"car-05", marca:"BMW", modelo:"M2 Competition", ano:2020, km:19800,
+      cambio:"Automático", combustivel:"Gasolina", preco:52500, precoDiaria:249,
+      modalidade:"ambos", imagem:"./m2-1.jpg", imagem2:"./m2-2.jpg",
+      destaque:false },
+    { id:"car-06", marca:"Ford", modelo:"Mustang EcoBoost", ano:2016, km:47300,
+      cambio:"Automático", combustivel:"Gasolina", preco:21900, precoDiaria:109,
+      modalidade:"ambos", imagem:"./mustang-eco.jpg", destaque:false },
+    { id:"car-07", marca:"Volvo", modelo:"XC60 T8", ano:2019, km:38600,
+      cambio:"Automático", combustivel:"Híbrido", preco:34900, precoDiaria:159,
+      modalidade:"ambos", imagem:"./volvo-xc60.jpg", destaque:false },
+    { id:"car-08", marca:"Tesla", modelo:"Model 3", ano:2020, km:31200,
+      cambio:"Automático", combustivel:"Elétrico", preco:27500, precoDiaria:139,
+      modalidade:"ambos", imagem:"./tesla-m3.jpg", destaque:false },
+  ],
+
+  animacao: { lerp:0.1, staggerCards:90, staggerBlocos:0.08, staggerPagina:70 },
+};
+
+/* ================================================================
+   i18n — idioma ativo em memória (sem localStorage)
+   ================================================================ */
+const LOCALES = { en:"en-US", pt:"pt-BR", es:"es-US" };
+/* o site SEMPRE abre em inglês (decisão de produto para a loja da
+   Califórnia); o visitante troca manualmente no seletor do header */
+let idiomaAtivo = CONFIG.idiomaPadrao;
+const T = () => CONFIG.idiomas[idiomaAtivo];
+
+/* ================================================================
+   UTILITÁRIOS — estado visual = função pura do progresso
+   ================================================================ */
+/* console pode ser parcial (ou ausente) em webviews embutidos — um
+   console.info inexistente NÃO pode derrubar o motor de animação */
+function logar(){
+  try {
+    const c = typeof console !== "undefined" ? console : null;
+    const fn = c && (c.info || c.log);
+    if (typeof fn === "function") fn.apply(c, arguments);
+  } catch (e) { /* silêncio: log nunca é crítico */ }
+}
+
+const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+const seg = (p, a, b) => clamp01((p - a) / (b - a));
+const easeOutCubic  = t => 1 - Math.pow(1 - t, 3);
+const easeInOutQuad = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
+const easeOutExpo   = t => t === 1 ? 1 : 1 - Math.pow(2, -10*t);
+const lerp = (a, b, f) => a + (b - a) * f;
+function piecewise(pontos, p){
+  if (p <= pontos[0][0]) return pontos[0][1];
+  for (let i = 1; i < pontos.length; i++){
+    if (p <= pontos[i][0]){
+      const [pa,va] = pontos[i-1], [pb,vb] = pontos[i];
+      return va + (vb - va) * ((p - pa) / (pb - pa));
+    }
+  }
+  return pontos[pontos.length-1][1];
+}
+const fmtUSD = v => v.toLocaleString(LOCALES[idiomaAtivo], { style:"currency", currency:"USD", maximumFractionDigits:0 });
+const fmtMi  = v => v.toLocaleString(LOCALES[idiomaAtivo]) + " mi";
+
+/* ================================================================
+   ScrubMedia — "desenhe o frame do progresso X"
+   Fontes: frames em canvas → vídeo (lerp) → stand-in procedural
+   ================================================================ */
+class ScrubMedia {
+  constructor(videoEl, canvasEl, desenharStandIn, frames){
+    this.video = videoEl; this.canvas = canvasEl;
+    this.desenharStandIn = desenharStandIn;
+    this.modo = "esperando";
+    this.duracao = 0; this.tempoSuave = 0; this.ultimoEscrito = -1;
+    this.frames = null; this.ultimoFrame = -1;
+
+    if (frames && frames.length){
+      this.frames = frames.map(f => { const im = new Image(); im.src = f; return im; });
+      this.modo = "frames";
+      logar(`[Absolut] mídia em modo FRAMES (${frames.length} quadros em canvas)`);
+      this.prepararCanvas();
+      return;
+    }
+    const usarVideo = () => {
+      if (this.modo === "canvas") return;
+      this.duracao = this.video.duration || 0;
+      if (this.duracao > 0){ this.modo = "video"; logar("[Absolut] mídia em modo VÍDEO (scrub por currentTime)"); }
+      else this.ativarCanvas();
+    };
+    const falhar = () => this.ativarCanvas();
+    if (videoEl.readyState >= 1 && videoEl.duration) usarVideo();
+    videoEl.addEventListener("loadedmetadata", usarVideo, { once:true });
+    videoEl.addEventListener("error", falhar, { once:true });
+    setTimeout(() => { if (this.modo === "esperando") this.ativarCanvas(); }, 4000);
+  }
+  prepararCanvas(){
+    this.video.hidden = true;
+    this.canvas.hidden = false;
+    const redimensionar = () => {
+      if (!this.canvas.clientWidth) return; /* view oculta: mede na volta */
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      this.canvas.width  = this.canvas.clientWidth  * dpr;
+      this.canvas.height = this.canvas.clientHeight * dpr;
+      this.ultimoFrame = -1;
+    };
+    redimensionar();
+    addEventListener("resize", redimensionar, { passive:true });
+  }
+  ativarCanvas(){
+    if (this.modo === "canvas") return;
+    this.modo = "canvas";
+    logar("[Absolut] mídia caiu no STAND-IN procedural (o vídeo/frames não carregou)");
+    this.prepararCanvas();
+  }
+  desenharCover(im){
+    const iw = im.naturalWidth, ih = im.naturalHeight;
+    if (!iw || !ih) return false;
+    const c = this.canvas.getContext("2d");
+    const cw = this.canvas.width, ch = this.canvas.height;
+    const esc = Math.max(cw/iw, ch/ih), dw = iw*esc, dh = ih*esc;
+    c.drawImage(im, (cw-dw)/2, (ch-dh)/2, dw, dh);
+    return true;
+  }
+  render(progress){
+    if (this.modo === "frames"){
+      const i = Math.round(progress * (this.frames.length - 1));
+      if (i === this.ultimoFrame) return;
+      if (this.frames[i].complete && this.desenharCover(this.frames[i])) this.ultimoFrame = i;
+      return;
+    }
+    if (this.modo === "video"){
+      const alvo = progress * this.duracao;
+      this.tempoSuave = lerp(this.tempoSuave, alvo, CONFIG.animacao.lerp);
+      if (Math.abs(this.tempoSuave - this.ultimoEscrito) > 1/90){
+        this.video.currentTime = this.tempoSuave;
+        this.ultimoEscrito = this.tempoSuave;
+      }
+    } else if (this.modo === "canvas"){
+      this.desenharStandIn(this.canvas, progress);
+    }
+  }
+}
+
+/* ---------- stand-ins procedurais ---------- */
+function standInEstrada(cv, p){
+  const c = cv.getContext("2d"), w = cv.width, h = cv.height;
+  if (!w) return;
+  c.fillStyle = "#07090C"; c.fillRect(0,0,w,h);
+  const horizonte = h * 0.55;
+  const g = c.createLinearGradient(0,0,0,horizonte);
+  g.addColorStop(0,"#0B0E14"); g.addColorStop(1,"#12161D");
+  c.fillStyle = g; c.fillRect(0,0,w,horizonte);
+  for (let camada = 0; camada < 3; camada++){
+    const vel = (camada+1) * 2.2, esc = 1 - camada*0.28;
+    for (let i = 0; i < 6; i++){
+      const x = ((i/6 + p*vel) % 1) * (w*1.2) - w*0.1;
+      const px = w - x;
+      c.fillStyle = `rgba(232,161,61,${0.10*esc})`;
+      c.beginPath(); c.arc(px, horizonte - 40*esc*(h/720), 26*esc*(h/720), 0, 7); c.fill();
+      c.fillStyle = `rgba(232,161,61,${0.55*esc})`;
+      c.fillRect(px-1.5, horizonte - 42*esc*(h/720), 3, 42*esc*(h/720));
+    }
+  }
+  c.strokeStyle = "rgba(237,241,244,.55)"; c.lineWidth = Math.max(2, w*0.004);
+  for (let i = 0; i < 8; i++){
+    const t = ((i/8 + p*3) % 1);
+    const y = horizonte + t*t*(h-horizonte);
+    const larg = 6 + t*t*60;
+    c.beginPath();
+    c.moveTo(w/2 - larg*(w/1280), y);
+    c.lineTo(w/2 + larg*(w/1280), y);
+    c.stroke();
+  }
+  const r = (8 + easeOutCubic(p)*70) * (h/720);
+  const lg = c.createRadialGradient(w/2, horizonte+(h-horizonte)*0.35, 0, w/2, horizonte+(h-horizonte)*0.35, r*3);
+  lg.addColorStop(0,"rgba(237,241,244,.9)");
+  lg.addColorStop(.4,"rgba(159,196,222,.35)");
+  lg.addColorStop(1,"transparent");
+  c.fillStyle = lg;
+  c.beginPath(); c.arc(w/2, horizonte+(h-horizonte)*0.35, r*3, 0, 7); c.fill();
+}
+function standInFarol(cv, p){
+  const c = cv.getContext("2d"), w = cv.width, h = cv.height;
+  if (!w) return;
+  c.fillStyle = "#000"; c.fillRect(0,0,w,h);
+  const acende = seg(p, .2, .45);
+  const intens = easeOutExpo(acende) * (1 - seg(p, .65, 1));
+  if (intens <= 0.001) return;
+  const g = c.createRadialGradient(w*0.5, h*0.52, 0, w*0.5, h*0.52, w*0.3*intens + 1);
+  g.addColorStop(0, `rgba(237,241,244,${0.9*intens})`);
+  g.addColorStop(0.5, `rgba(159,196,222,${0.4*intens})`);
+  g.addColorStop(1, "transparent");
+  c.fillStyle = g;
+  c.beginPath(); c.arc(w*0.5, h*0.52, w*0.3*intens + 1, 0, 7); c.fill();
+}
+
+/* ================================================================
+   RENDERIZAÇÃO (idioma ativo)
+   ================================================================ */
+function aplicarTextos(){
+  const dic = T();
+  document.querySelectorAll("[data-txt]").forEach(el => {
+    let v = dic;
+    for (const k of el.dataset.txt.split(".")) v = v?.[k];
+    if (typeof v === "string") el.textContent = v;
+  });
+  document.documentElement.lang = LOCALES[idiomaAtivo];
+}
+
+/* ícones das redes sociais (SVG inline em traço, cor via currentColor) */
+const ICONES_SOCIAIS = {
+  instagram: `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none"/></svg>`,
+  facebook:  `<svg viewBox="0 0 24 24"><path d="M14 8h2.5V4.5H14A4.5 4.5 0 0 0 9.5 9v2.5H7V15h2.5v6H13v-6h2.6l.6-3.5H13V9a1 1 0 0 1 1-1z"/></svg>`,
+  whatsapp:  `<svg viewBox="0 0 24 24"><path d="M20.5 11.7A8.5 8.5 0 1 1 5.2 6.6 8.5 8.5 0 0 1 20.5 11.7z"/><path d="M4.6 20.4l1.2-3.6"/><path d="M8.8 9.2c0 3.3 2.7 6 6 6l1.4-1.4-2-1.4-1.2.6a4.6 4.6 0 0 1-2-2l.6-1.2-1.4-2z"/></svg>`,
+  youtube:   `<svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.5 9.5l4.5 2.5-4.5 2.5z"/></svg>`,
+};
+function renderSociais(){
+  const alvo = document.querySelector("[data-el='sociais']");
+  alvo.innerHTML = Object.entries(CONFIG.social || {})
+    .filter(([, url]) => url && !url.startsWith("["))
+    .map(([nome, url]) =>
+      `<a class="social" href="${url}" target="_blank" rel="noopener"
+          aria-label="${nome.charAt(0).toUpperCase() + nome.slice(1)}">${ICONES_SOCIAIS[nome] || ""}</a>`)
+    .join("");
+}
+
+/* galerias dos cards: no toque, o swipe troca a foto e as bolinhas
+   acompanham a posição (scroll-snap faz o resto nativamente) */
+function ligarGalerias(){
+  document.querySelectorAll("[data-galeria]").forEach(g => {
+    if (g.dataset.ligada || g.children.length < 2) return;
+    g.dataset.ligada = "1";
+    const dots = g.parentElement.querySelectorAll(".galeria-dots span");
+    let agendado = false;
+    g.addEventListener("scroll", () => {
+      if (agendado) return;
+      agendado = true;
+      requestAnimationFrame(() => {
+        agendado = false;
+        const i = Math.round(g.scrollLeft / g.clientWidth);
+        dots.forEach((d, k) => d.classList.toggle("ativa", k === i));
+      });
+    }, { passive:true });
+  });
+}
+
+/* finale reutilizável — a logo entrando do escuro fecha TODAS as páginas */
+function finaleHTML(){
+  return `
+  <section class="pin-wrap pin-wrap--finale sec-finale" data-finale aria-label="Absolut Motors">
+    <div class="pin-sticky">
+      <div class="finale-inner">
+        <div class="finale-logo-wrap">
+          <img src="./logo-absolut-transparente.png" alt="Absolut Motors" data-f-logo>
+          <div class="finale-sweep" data-f-sweep aria-hidden="true"></div>
+        </div>
+        <p class="finale-tag" data-f-tag>${T().finale.tag}</p>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* markup de um card — compartilhado entre home e páginas */
+function cardHTML(c){
+  const ui = T().ui;
+  const spec = v => ui.specs[v] ?? v;
+  return `
+    <article class="card" data-card tabindex="0" aria-label="${c.marca} ${c.modelo}">
+      <div class="card-media">
+        ${ c.imagem && !c.imagem.startsWith("[")
+            ? `<div class="galeria" data-galeria>
+                 <img src="${c.imagem}" alt="${c.marca} ${c.modelo}" loading="lazy">
+                 ${ c.imagem2 ? `<img src="${c.imagem2}" alt="" loading="lazy" aria-hidden="true">` : "" }
+               </div>` +
+              ( c.imagem2 ? `<div class="galeria-dots" aria-hidden="true"><span class="ativa"></span><span></span></div>` : "" )
+            : `<div class="placeholder-silhueta">${ui.foto} — ${c.id}</div>` }
+        <div class="card-badges">
+          <span class="badge">${ui.modalidade[c.modalidade] ?? c.modalidade}</span>
+          ${ c.destaque ? `<span class="badge badge--destaque">${ui.destaque}</span>` : "" }
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-marca">${c.marca}</p>
+        <h3 class="card-modelo">${c.modelo}</h3>
+        <div class="card-specs mono">
+          <span>${c.ano}</span><span>${fmtMi(c.km)}</span>
+          <span>${spec(c.cambio)}</span><span>${spec(c.combustivel)}</span>
+        </div>
+        <div class="card-precos">
+          <span class="card-preco">${fmtUSD(c.preco)}</span>
+          ${ c.precoDiaria != null ? `<span class="card-diaria">${fmtUSD(c.precoDiaria)}${ui.porDia}</span>` : "" }
+        </div>
+        <div class="card-acoes">
+          <a class="btn btn--cheio btn--mini" href="#/contato">${ui.apply}</a>
+          <a class="btn btn--linha btn--mini" href="${(CONFIG.social || {}).whatsapp || "#/contato"}"
+             ${ (CONFIG.social || {}).whatsapp ? 'target="_blank" rel="noopener"' : "" }>${ui.connect}</a>
+        </div>
+      </div>
+    </article>`;
+}
+
+function renderCardsHome(){
+  // TODO: substituir por fetch da API — este array vira a resposta do backend
+  document.querySelector("[data-el='gridCarros']").innerHTML =
+    CONFIG.carros.map(cardHTML).join("");
+}
+
+/* ---------- PÁGINA ESTOQUE: destaque + filtros + grid ---------- */
+/* Estado dos filtros vive em memória (sem localStorage) e sobrevive
+   à troca de idioma; a lista exibida é sempre derivada dele. */
+const filtroEstado = {
+  busca:"", marca:"", modelo:"", ordenar:"destaque", modalidade:"",
+  precoDe:"", precoAte:"", combustivel:"", cambio:"",
+  milhasDe:"", milhasAte:"", anoDe:"", anoAte:"", avancada:false,
+};
+const escAttr = v => String(v).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+
+const carroDestaquePagina = () =>
+  CONFIG.carros.reduce((a, b) => (b.preco > a.preco ? b : a));
+/* o flagship fica permanente no topo; o grid filtra o resto */
+const dadosFiltraveis = () => {
+  const top = carroDestaquePagina();
+  return CONFIG.carros.filter(c => c.id !== top.id);
+};
+function opcoesSelect(lista, rotuloVazio, selecionado){
+  return [`<option value="">${rotuloVazio}</option>`,
+    ...lista.map(v => `<option value="${escAttr(v)}"${v === selecionado ? " selected" : ""}>${T().ui.specs[v] ?? v}</option>`)
+  ].join("");
+}
+
+function listaFiltrada(){
+  const st = filtroEstado;
+  const n = v => v === "" ? null : +v;
+  const lista = dadosFiltraveis().filter(c => {
+    if (st.busca && !(`${c.marca} ${c.modelo}`.toLowerCase().includes(st.busca.toLowerCase()))) return false;
+    if (st.marca && c.marca !== st.marca) return false;
+    if (st.modelo && c.modelo !== st.modelo) return false;
+    if (st.modalidade === "venda"   && !(c.modalidade === "venda"   || c.modalidade === "ambos")) return false;
+    if (st.modalidade === "locacao" && !(c.modalidade === "locacao" || c.modalidade === "ambos")) return false;
+    if (st.combustivel && c.combustivel !== st.combustivel) return false;
+    if (st.cambio && c.cambio !== st.cambio) return false;
+    if (n(st.precoDe)   != null && c.preco < n(st.precoDe))   return false;
+    if (n(st.precoAte)  != null && c.preco > n(st.precoAte))  return false;
+    if (n(st.milhasDe)  != null && c.km    < n(st.milhasDe))  return false;
+    if (n(st.milhasAte) != null && c.km    > n(st.milhasAte)) return false;
+    if (n(st.anoDe)     != null && c.ano   < n(st.anoDe))     return false;
+    if (n(st.anoAte)    != null && c.ano   > n(st.anoAte))    return false;
+    return true;
+  });
+  const ordem = {
+    destaque:(a,b) => (b.destaque - a.destaque) || (b.preco - a.preco),
+    menor:(a,b) => a.preco - b.preco,
+    maior:(a,b) => b.preco - a.preco,
+    novo:(a,b) => b.ano - a.ano,
+    km:(a,b) => a.km - b.km,
+  }[filtroEstado.ordenar] || (() => 0);
+  return lista.sort(ordem);
+}
+
+function aplicarFiltrosEstoque(){
+  const raiz = document.querySelector("[data-view='estoque']");
+  const grid = raiz.querySelector("[data-f='grid']");
+  const resultado = raiz.querySelector("[data-f='resultado']");
+  if (!grid) return;
+  const f = T().paginas.estoque.filtros;
+  const lista = listaFiltrada();
+  if (lista.length){
+    grid.innerHTML = lista.map(cardHTML).join("");
+  } else {
+    grid.innerHTML = `<div class="filtros-vazio">${f.vazio}<br>
+      <button type="button" class="bloco-cta" data-f="limpar">${f.limpar}</button></div>`;
+    grid.querySelector("[data-f='limpar']").addEventListener("click", () => {
+      Object.assign(filtroEstado, { busca:"", marca:"", modelo:"", modalidade:"",
+        precoDe:"", precoAte:"", combustivel:"", cambio:"",
+        milhasDe:"", milhasAte:"", anoDe:"", anoAte:"" });
+      renderPaginaEstoque();
+      dispatchEvent(new Event("reveals:atualizar"));
+    });
+  }
+  resultado.textContent = `${lista.length} ${lista.length === 1 ? f.umResultado : f.resultados}`;
+  ligarGalerias(); /* grid re-renderizado tem galerias novas */
+  dispatchEvent(new Event("reveals:atualizar"));
+}
+
+function ligarFiltrosEstoque(){
+  const raiz = document.querySelector("[data-view='estoque']");
+  const st = filtroEstado;
+  const on = (sel, ev, fn) => raiz.querySelector(sel)?.addEventListener(ev, fn);
+  on("[data-f='busca']", "input", e => { st.busca = e.target.value; aplicarFiltrosEstoque(); });
+  on("[data-f='marca']", "change", e => {
+    st.marca = e.target.value;
+    st.modelo = ""; /* modelo depende da marca escolhida */
+    const modelos = [...new Set(dadosFiltraveis()
+      .filter(c => !st.marca || c.marca === st.marca).map(c => c.modelo))];
+    raiz.querySelector("[data-f='modelo']").innerHTML =
+      opcoesSelect(modelos, T().paginas.estoque.filtros.todosModelos, "");
+    aplicarFiltrosEstoque();
+  });
+  [["modelo","change"],["ordenar","change"],["modalidade","change"],
+   ["combustivel","change"],["cambio","change"],
+   ["precoDe","input"],["precoAte","input"],["milhasDe","input"],["milhasAte","input"],
+   ["anoDe","input"],["anoAte","input"]].forEach(([k, ev]) =>
+    on(`[data-f='${k}']`, ev, e => { st[k] = e.target.value; aplicarFiltrosEstoque(); }));
+  on("[data-f='toggleAvancada']", "click", e => {
+    st.avancada = !st.avancada;
+    raiz.querySelector("[data-f='painelAvancada']").hidden = !st.avancada;
+    e.currentTarget.setAttribute("aria-expanded", String(st.avancada));
+    e.currentTarget.querySelector(".seta").textContent = st.avancada ? "\u25B4" : "\u25BE";
+    dispatchEvent(new Event("reveals:atualizar"));
+  });
+}
+
+function renderPaginaEstoque(){
+  const dic = T().paginas.estoque, ui = T().ui, f = dic.filtros, st = filtroEstado;
+  const spec = v => ui.specs[v] ?? v;
+  const top = carroDestaquePagina();
+  const base = dadosFiltraveis();
+  const marcas = [...new Set(base.map(c => c.marca))];
+  const modelos = [...new Set(base.filter(c => !st.marca || c.marca === st.marca).map(c => c.modelo))];
+  const combustiveis = [...new Set(base.map(c => c.combustivel))];
+  const cambios = [...new Set(base.map(c => c.cambio))];
+  const faixa = (chave, rotulo, unidadeDe, unidadeAte) => `
+    <div class="campo-l"><span>${rotulo}</span>
+      <div class="faixa">
+        <input type="number" min="0" inputmode="numeric" data-f="${chave}De"
+               placeholder="${unidadeDe}" value="${escAttr(st[chave+"De"])}">
+        <input type="number" min="0" inputmode="numeric" data-f="${chave}Ate"
+               placeholder="${unidadeAte}" value="${escAttr(st[chave+"Ate"])}">
+      </div>
+    </div>`;
+  document.querySelector("[data-el='paginaEstoque']").innerHTML = `
+    <section class="destaque-hero">
+      <div class="destaque-bg" data-anim="bg">
+        ${ top.imagem && !top.imagem.startsWith("[")
+            ? `<img src="${top.imagemDestaque || top.imagem}" alt="${top.marca} ${top.modelo}">`
+            : `<div class="marca-agua" aria-hidden="true">${top.modelo}</div>` }
+      </div>
+      <div class="destaque-scrim" aria-hidden="true"></div>
+      <div class="destaque-info">
+        <p class="eyebrow" data-anim>${dic.flagship}</p>
+        <p class="destaque-marca" data-anim>${top.marca}</p>
+        <h1 class="display destaque-titulo" data-anim>${top.modelo}</h1>
+        <div class="destaque-specs mono" data-anim>
+          <span>${top.ano}</span><span>${fmtMi(top.km)}</span>
+          <span>${spec(top.cambio)}</span><span>${spec(top.combustivel)}</span>
+        </div>
+        <div class="destaque-preco-row" data-anim>
+          <span class="destaque-preco">${fmtUSD(top.preco)}</span>
+          ${ top.precoDiaria != null ? `<span class="destaque-diaria">${fmtUSD(top.precoDiaria)}${ui.porDia}</span>` : "" }
+        </div>
+        <div class="destaque-ctas" data-anim>
+          <a class="btn btn--cheio" href="#/contato">${dic.ctaDetalhes}</a>
+          <a class="btn btn--linha" href="#/contato">${dic.ctaTest}</a>
+        </div>
+      </div>
+    </section>
+    <section class="pagina-corpo">
+      <div class="filtros" data-anim>
+        <div class="filtros-busca">
+          <input type="search" data-f="busca" placeholder="${f.buscar}"
+                 value="${escAttr(st.busca)}" aria-label="${f.buscar}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+          </svg>
+        </div>
+        <div class="filtros-grid-2">
+          <label class="campo-l"><span>${f.marca}</span>
+            <select data-f="marca">${opcoesSelect(marcas, f.todasMarcas, st.marca)}</select>
+          </label>
+          <label class="campo-l"><span>${f.modelo}</span>
+            <select data-f="modelo">${opcoesSelect(modelos, f.todosModelos, st.modelo)}</select>
+          </label>
+        </div>
+        <div class="filtros-grid-2">
+          <label class="campo-l"><span>${f.ordenar}</span>
+            <select data-f="ordenar">
+              ${[["destaque",f.ordDestaque],["menor",f.ordMenor],["maior",f.ordMaior],
+                 ["novo",f.ordNovo],["km",f.ordKm]]
+                 .map(([v,l]) => `<option value="${v}"${st.ordenar===v?" selected":""}>${l}</option>`).join("")}
+            </select>
+          </label>
+          <label class="campo-l"><span>${f.modalidade}</span>
+            <select data-f="modalidade">
+              ${[["",f.qualquer],["venda",ui.modalidade.venda],["locacao",ui.modalidade.locacao]]
+                 .map(([v,l]) => `<option value="${v}"${st.modalidade===v?" selected":""}>${l}</option>`).join("")}
+            </select>
+          </label>
+        </div>
+        <button type="button" class="filtros-toggle" data-f="toggleAvancada"
+                aria-expanded="${st.avancada}">
+          ${f.avancada}<span class="seta">${st.avancada ? "\u25B4" : "\u25BE"}</span>
+        </button>
+        <div class="filtros-avancada" data-f="painelAvancada" ${st.avancada ? "" : "hidden"}>
+          ${faixa("preco", f.preco, f.de, f.ate)}
+          <label class="campo-l"><span>${f.combustivel}</span>
+            <select data-f="combustivel">${opcoesSelect(combustiveis, f.qualquer, st.combustivel)}</select>
+          </label>
+          <label class="campo-l"><span>${f.cambio}</span>
+            <select data-f="cambio">${opcoesSelect(cambios, f.qualquer, st.cambio)}</select>
+          </label>
+          ${faixa("milhas", f.milhas, f.de, f.ate)}
+          ${faixa("ano", f.ano, f.de, f.ate)}
+        </div>
+      </div>
+      <div class="grid-titulo" data-anim>
+        <h2 class="display">${dic.gridTitulo}</h2>
+        <p class="filtros-resultado" data-f="resultado"></p>
+      </div>
+      <div class="grid-carros" data-f="grid"></div>
+    </section>` + finaleHTML();
+  ligarFiltrosEstoque();
+  aplicarFiltrosEstoque();
+}
+
+/* ---------- PÁGINA ALUGUE: só carros com diária + formulário ---------- */
+function renderPaginaAlugue(){
+  const dic = T().paginas.alugue, form = T().locacao.form;
+  const alugaveis = CONFIG.carros
+    .filter(c => c.precoDiaria != null)
+    .sort((a, b) => a.precoDiaria - b.precoDiaria);
+  document.querySelector("[data-el='paginaAlugue']").innerHTML = `
+    <section class="pagina-corpo">
+      <header class="pagina-head">
+        <p class="eyebrow" data-anim>${dic.eyebrow}</p>
+        <h1 class="display" data-anim>${dic.titulo}</h1>
+        <p data-anim>${dic.sub}</p>
+      </header>
+      <form class="form-visual" data-anim onsubmit="return false;">
+        <label><span>${form.retirada}</span><input type="date" name="retirada"></label>
+        <label><span>${form.devolucao}</span><input type="date" name="devolucao"></label>
+        <label><span>${form.categoria}</span>
+          <select name="categoria">
+            <option>${form.cat1}</option><option>${form.cat2}</option><option>${form.cat3}</option>
+          </select>
+        </label>
+        <button type="submit">${form.botao}</button>
+      </form>
+      <div class="grid-titulo" data-anim><h2 class="display">${dic.gridTitulo}</h2></div>
+      <div class="grid-carros">${alugaveis.map(cardHTML).join("")}</div>
+    </section>` + finaleHTML();
+}
+
+/* ---------- PÁGINA CONTATO ---------- */
+function renderPaginaContato(){
+  const dic = T().paginas.contato;
+  document.querySelector("[data-el='paginaContato']").innerHTML = `
+    <section class="pagina-corpo">
+      <header class="pagina-head">
+        <p class="eyebrow" data-anim>${dic.eyebrow}</p>
+        <h1 class="display" data-anim>${dic.titulo}</h1>
+        <p data-anim>${dic.sub}</p>
+      </header>
+      <div class="contato-grid">
+      <div class="info-grid">
+        <div class="info-card" data-anim><p class="eyebrow">${dic.endereco}</p><p>${dic.enderecoTxt}</p></div>
+        <div class="info-card" data-anim><p class="eyebrow">${dic.telefone}</p><p>${dic.telefoneTxt}</p></div>
+        <div class="info-card" data-anim><p class="eyebrow">${dic.horario}</p><p>${dic.horarioTxt}</p></div>
+      </div>
+      <form class="form-visual" data-anim onsubmit="return false;">
+        <label><span>${dic.form.nome}</span><input type="text" name="nome"></label>
+        <label><span>${dic.form.email}</span><input type="email" name="email"></label>
+        <label class="campo-msg"><span>${dic.form.msg}</span><textarea name="msg"></textarea></label>
+        <button type="submit">${dic.form.botao}</button>
+      </form>
+      </div>
+    </section>` + finaleHTML();
+}
+
+/* ---------- HOME: blocos (estrutura fixa, texto por idioma) ---------- */
+/* mapa determinístico dos lumens: posição (%), tamanho (vmin),
+   cor, atraso de ignição (fração do progresso) e duração da deriva */
+const LUMENS = [
+  { x:6,  y:5,  t:34, cor:"sodio", atraso:0.00, deriva:15 },
+  { x:80, y:10, t:26, cor:"xenon", atraso:0.10, deriva:19 },
+  { x:32, y:28, t:20, cor:"sodio", atraso:0.22, deriva:12 },
+  { x:88, y:42, t:30, cor:"sodio", atraso:0.34, deriva:17 },
+  { x:10, y:56, t:24, cor:"xenon", atraso:0.46, deriva:13 },
+  { x:64, y:70, t:32, cor:"sodio", atraso:0.58, deriva:18 },
+  { x:24, y:86, t:22, cor:"sodio", atraso:0.70, deriva:12 },
+];
+
+function renderBlocos(){
+  const wrap = document.querySelector("[data-el='blocosWrap']");
+  wrap.innerHTML = `<div class="lumens" aria-hidden="true">${
+    LUMENS.map(l => `<span class="lumen lumen--${l.cor}" data-lumen data-atraso="${l.atraso}"
+      style="left:${l.x}%;top:${l.y}%;width:${l.t}vmin;height:${l.t}vmin">
+      <i style="animation-duration:${l.deriva}s, ${(l.deriva * 0.42).toFixed(1)}s"></i></span>`).join("")
+  }</div><div class="blocos-inner">` + CONFIG.blocosStats.map((stat, i) => `
+    <div class="bloco" data-bloco>
+      <div class="bloco-img">${
+        (CONFIG.blocosImagens || [])[i]
+          ? `<img src="${CONFIG.blocosImagens[i]}" alt="" loading="lazy">`
+          : `<span data-bloco-img></span>`
+      }</div>
+      <div class="bloco-txt">
+        <p class="eyebrow">0${i+1}</p>
+        <h3 data-bloco-titulo></h3>
+        <p data-bloco-texto></p>
+        ${ stat ? `<div class="bloco-stat"><span data-contador data-valor="${stat.valor}" data-sufixo="${stat.sufixo}">0</span><small data-bloco-stat-label></small></div>` : "" }
+        <a class="bloco-cta" href="#/contato" data-bloco-cta></a>
+      </div>
+    </div>`).join("") + `</div>`;
+  atualizarTextosBlocos();
+}
+function atualizarTextosBlocos(){
+  const dic = T().blocos, ui = T().ui;
+  document.querySelectorAll("[data-bloco]").forEach((b, i) => {
+    const sp = b.querySelector("[data-bloco-img]"); /* só existe sem foto */
+    if (sp) sp.textContent = `${ui.imagemBloco} ${i+1}`;
+    b.querySelector("[data-bloco-titulo]").textContent = dic[i].titulo;
+    b.querySelector("[data-bloco-texto]").textContent  = dic[i].texto;
+    b.querySelector("[data-bloco-cta]").textContent    = dic[i].cta;
+    const lbl = b.querySelector("[data-bloco-stat-label]");
+    if (lbl) lbl.textContent = dic[i].statLabel;
+  });
+}
+
+/* ================================================================
+   ROUTER — páginas em hash (#/, #/estoque, #/alugue, #/contato)
+   ================================================================ */
+const ROTAS = ["home", "estoque", "alugue", "contato"];
+let rotaAtiva = "home";
+function rotaDoHash(){
+  const h = location.hash.replace(/^#\/?/, "");
+  return ROTAS.includes(h) ? h : "home";
+}
+function aplicarRota(r){
+  rotaAtiva = ROTAS.includes(r) ? r : "home";
+  document.body.dataset.rota = rotaAtiva;
+  document.querySelectorAll(".view").forEach(v => { v.hidden = v.dataset.view !== rotaAtiva; });
+  document.querySelectorAll(".nav a").forEach(a =>
+    a.dataset.rota === rotaAtiva ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  scrollTo(0, 0);
+  /* hash é só cortesia (deep link / botão voltar): alguns previews
+     embutidos bloqueiam navegação — a troca de view acima não depende dele */
+  try {
+    const alvo = "#/" + (rotaAtiva === "home" ? "" : rotaAtiva);
+    if (location.hash !== alvo) history.pushState(null, "", alvo);
+  } catch (e) { /* sandbox sem histórico: segue funcionando */ }
+  /* re-mede canvases/layout (a view escondida tinha tamanho zero) */
+  dispatchEvent(new Event("resize"));
+  dispatchEvent(new CustomEvent("rota:aplicada", { detail:{ rota: rotaAtiva } }));
+}
+/* Delegação: qualquer <a href="#/..."> troca a view diretamente,
+   mesmo onde a navegação por hash é bloqueada. Cobre também os CTAs
+   renderizados dinamicamente dentro das páginas. */
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[href^='#/']");
+  if (!a) return;
+  e.preventDefault();
+  aplicarRota(a.getAttribute("href").replace(/^#\//, "") || "home");
+});
+addEventListener("hashchange", () => {
+  if (rotaDoHash() !== rotaAtiva) aplicarRota(rotaDoHash());
+});
+addEventListener("popstate", () => {
+  if (rotaDoHash() !== rotaAtiva) aplicarRota(rotaDoHash());
+});
+
+/* ================================================================
+   Troca de idioma: reaplica textos e re-renderiza tudo
+   ================================================================ */
+function aplicarIdioma(lang){
+  idiomaAtivo = lang;
+  document.querySelectorAll(".lang button").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  aplicarTextos();
+  renderCardsHome();
+  atualizarTextosBlocos();
+  renderPaginaEstoque();
+  renderPaginaAlugue();
+  renderPaginaContato();
+  ligarGalerias();
+  dispatchEvent(new Event("i18n:aplicado"));
+}
+document.querySelectorAll(".lang button").forEach(b =>
+  b.addEventListener("click", () => aplicarIdioma(b.dataset.lang)));
+
+/* ================================================================
+   MOTOR DE SCROLL (home) + reveladores das páginas
+   ================================================================ */
+const mqReduz = matchMedia("(prefers-reduced-motion: reduce)");
+const prefereMenosMovimento = mqReduz.matches;
+/* estado exposto para o painel de diagnóstico (?debug=1) */
+window.__abs = { erros: [] };
+addEventListener("error", e => window.__abs.erros.push(e.message || String(e)));
+
+function iniciarMotor(){
+  if (iniciarMotor.rodou) return;
+  iniciarMotor.rodou = true;
+  document.body.classList.add("js-motion");
+  const observadores = []; /* precisa existir antes da 1ª medir() */
+
+  function paraSrcDeVideo(src){
+    if (!src.startsWith("data:")) return src;
+    const virgula = src.indexOf(",");
+    const mime = src.slice(5, src.indexOf(";"));
+    const bin = atob(src.slice(virgula + 1));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return URL.createObjectURL(new Blob([bytes], { type: mime }));
+  }
+  const definirSrc = (sel, src) => { if (src) document.querySelector(sel).src = paraSrcDeVideo(src); };
+  if (!CONFIG.midia.heroFrames.length)  definirSrc("[data-video='hero']",  CONFIG.midia.heroVideo);
+  if (!CONFIG.midia.farolFrames.length) definirSrc("[data-video='farol']", CONFIG.midia.farolVideo);
+
+  const midiaHero  = new ScrubMedia(
+    document.querySelector("[data-video='hero']"),
+    document.querySelector("[data-canvas='hero']"),
+    standInEstrada, CONFIG.midia.heroFrames);
+  const midiaFarol = new ScrubMedia(
+    document.querySelector("[data-video='farol']"),
+    document.querySelector("[data-canvas='farol']"),
+    standInFarol, CONFIG.midia.farolFrames);
+  Object.assign(window.__abs, { midiaHero, midiaFarol });
+
+  const destravar = () => {
+    [midiaHero.video, midiaFarol.video].forEach(v => {
+      if (!v.src) return;
+      const pr = v.play();
+      if (pr?.then) pr.then(() => v.pause()).catch(() => {});
+      else v.pause();
+    });
+  };
+  addEventListener("touchstart", destravar, { passive:true, once:true });
+  addEventListener("pointerdown", destravar, { passive:true, once:true });
+  addEventListener("keydown", destravar, { once:true });
+
+  const $ = s => document.querySelector(s);
+  const el = {
+    secEstoque: $("[data-el='secEstoque']"),
+    estoqueConteudo: $("[data-el='estoqueConteudo']"),
+    gridCarros: $("[data-el='gridCarros']"),
+    pinHero: $("[data-pin='hero']"), pinFarol: $("[data-pin='farol']"),
+    fxHero: $("[data-fx='hero']"), fxFarol: $("[data-fx='farol']"),
+    heroOverlay: $("[data-el='heroOverlay']"), heroTitulo: $("[data-el='heroTitulo']"),
+    heroLogoImg: $("[data-el='heroLogoImg']"), heroLogoSweep: $("[data-el='heroLogoSweep']"),
+    barraAcao: $("[data-el='barraAcao']"),
+    blocosWrap: $("[data-el='blocosWrap']"),
+    farolBloom: $("[data-el='farolBloom']"), farolContorno: $("[data-el='farolContorno']"),
+    farolOverlay: $("[data-el='farolOverlay']"), farolTexto: $("[data-el='farolTexto']"),
+    blocos: [...document.querySelectorAll("[data-bloco]")],
+  };
+  const blocosPartes = el.blocos.map(b => ({
+    img: b.querySelector(".bloco-img"),
+    itens: [...b.querySelector(".bloco-txt").children],
+    contador: b.querySelector("[data-contador]"),
+    ehPar: false,
+  }));
+
+  /* ---------- finales: um por view, coletados após cada re-render ---------- */
+  let finales = [];
+  function coletarFinales(){
+    finales = [...document.querySelectorAll("[data-finale]")].map(w => ({
+      wrap: w,
+      logo:  w.querySelector("[data-f-logo]"),
+      sweep: w.querySelector("[data-f-sweep]"),
+      tag:   w.querySelector("[data-f-tag]"),
+      top:0, altura:0, suave:0,
+    }));
+  }
+  coletarFinales();
+
+  /* ---------- cache de layout ---------- */
+  const cache = { vh:0, hero:{}, farol:{}, estoque:{ dist:0, cards:[] }, blocos:[] };
+  let estoqueHAtivo = false;
+  function medir(){
+    cache.vh = innerHeight;
+    const abs = elx => elx.getBoundingClientRect().top + scrollY;
+
+    /* --- trilho horizontal: decide o modo e mede ANTES do resto,
+       porque a altura da seção desloca tudo que vem depois --- */
+    const querH = innerWidth >= 1000 && !document.body.classList.contains("sem-motion");
+    if (querH !== estoqueHAtivo){
+      estoqueHAtivo = querH;
+      document.body.classList.toggle("estoque-h", querH);
+      if (!querH){
+        el.secEstoque.style.height = "";
+        el.gridCarros.style.transform = "";
+        el.gridCarros.querySelectorAll(".card").forEach(c => c.style.removeProperty("--in"));
+        cache.estoque = { dist:0, cards:[] };
+      }
+      observarReveals(); /* cards da home entram/saem do IO conforme o modo */
+    }
+    if (estoqueHAtivo && document.body.dataset.rota === "home"){
+      const cs = getComputedStyle(el.estoqueConteudo);
+      const contentW = el.estoqueConteudo.clientWidth
+        - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const dist = Math.max(0, el.gridCarros.scrollWidth - contentW);
+      el.secEstoque.style.height = (cache.vh + dist) + "px";
+      cache.estoque = {
+        dist, contentW,
+        top: abs(el.secEstoque),
+        cards: [...el.gridCarros.querySelectorAll(".card")]
+          .map(c => ({ el: c, left: c.offsetLeft, w: c.offsetWidth })),
+      };
+    }
+
+    if (document.body.dataset.rota === "home"){
+      /* a barra de ação entra quando os Selecionados terminam de passar */
+      cache.barraLimiar = abs(el.secEstoque) + el.secEstoque.offsetHeight - cache.vh;
+      for (const [chave, pin] of [["hero", el.pinHero], ["farol", el.pinFarol]]){
+        cache[chave] = { top: abs(pin), altura: pin.offsetHeight };
+      }
+      cache.blocos = el.blocos.map((b, i) => {
+        blocosPartes[i].ehPar = (i % 2) === 1;
+        return { top: abs(b), altura: b.offsetHeight };
+      });
+      cache.blocosSec = { top: abs(el.blocosWrap), altura: el.blocosWrap.offsetHeight };
+      cache.lumens = [...el.blocosWrap.querySelectorAll("[data-lumen]")]
+        .map(le => ({ el: le, atraso: +le.dataset.atraso }));
+    }
+    /* finales de views ocultas medem 0 e são ignorados no loop */
+    for (const f of finales){
+      f.altura = f.wrap.offsetHeight;
+      f.top = f.altura ? abs(f.wrap) : 0;
+    }
+  }
+  addEventListener("resize", medir, { passive:true });
+  addEventListener("load", medir);
+  document.fonts?.ready.then(medir);
+  [midiaHero.video, midiaFarol.video].forEach(v =>
+    v.addEventListener("loadedmetadata", medir, { once:true }));
+  medir();
+
+  let alvoScroll = scrollY;
+  addEventListener("scroll", () => { alvoScroll = scrollY; }, { passive:true });
+
+  const suave = { hero:0, farol:0, estoque:0 };
+  window.__abs.suave = suave;
+  const progressoPin = c => clamp01((alvoScroll - c.top) / (c.altura - cache.vh));
+
+  /* ignição antecipada: o flicker chega aos 12% do pin (era 20%)
+     para encurtar o breu inicial da seção */
+  const FLICKER = [0, .9, .06, 1, .12, .85, .3, 1];
+  function intensidadeFarol(p){
+    const f = seg(p, .12, .18), e = seg(p, .18, .38);
+    let base;
+    if (p < .12) base = 0;
+    else if (f < 1){
+      const idx = f * (FLICKER.length - 1);
+      const i0 = Math.floor(idx), i1 = Math.min(i0+1, FLICKER.length-1);
+      base = lerp(FLICKER[i0], FLICKER[i1], idx - i0) * .5;
+    } else base = .5 + .5 * easeOutExpo(e);
+    return base * (1 - easeInOutQuad(seg(p, .65, 1)));
+  }
+  const MAPA_T_FAROL = [[0,0],[.12,.10],[.40,.72],[.62,.84],[1,1]];
+
+  function quadro(){
+    const emHome = document.body.dataset.rota === "home";
+    if (emHome){
+
+    { /* HERO */
+      const bruto = progressoPin(cache.hero);
+      suave.hero = lerp(suave.hero, bruto, 0.12);
+      const p = suave.hero;
+      midiaHero.render(p);
+      const sai = easeInOutQuad(seg(p, .15, .40));
+      el.heroTitulo.style.transform = `translateY(${-60 * sai}px)`;
+      el.heroTitulo.style.opacity = 1 - sai;
+      el.heroTitulo.style.filter = sai > 0.001 ? `blur(${8 * sai}px)` : "none";
+      /* escurecimento comprimido (72–100%) para não sobrar tela preta */
+      const esc = easeInOutQuad(seg(p, .72, 1));
+      el.heroOverlay.style.opacity = (0.88 * esc).toFixed(3);
+      const zoom = 1 + 0.06 * easeInOutQuad(seg(p, .84, 1));
+      el.fxHero.style.transform = `scale(${zoom.toFixed(4)})`;
+      el.fxHero.style.filter = `saturate(${(1 - 0.65 * esc).toFixed(3)})`;
+
+      /* no escuro do fim (74–100%), a logo emerge — mesma coreografia
+         do finale: fade + desblur + varredura de luz, tudo do progresso */
+      const lg = easeOutCubic(seg(p, .74, .90));
+      el.heroLogoImg.style.opacity = lg.toFixed(3);
+      el.heroLogoImg.style.filter = lg < 0.999 ? `blur(${(14*(1-lg)).toFixed(2)}px)` : "none";
+      el.heroLogoImg.style.transform = `scale(${(0.92 + 0.08*lg).toFixed(4)})`;
+      const swH = seg(p, .80, .96);
+      el.heroLogoSweep.style.transform =
+        `translateX(${(-140 + 700 * easeInOutQuad(swH)).toFixed(1)}%) skewX(-12deg)`;
+      el.heroLogoSweep.style.opacity = (4 * swH * (1 - swH) * lg).toFixed(3);
+    }
+
+    { /* FAROL */
+      /* mesmo truque do finale: o progresso começa meia tela ANTES do
+         pin — o farol já pisca enquanto o preto ainda está subindo */
+      const antecipoF = cache.vh * 0.55;
+      const bruto = clamp01((alvoScroll - (cache.farol.top - antecipoF)) /
+                            ((cache.farol.altura - cache.vh) + antecipoF));
+      suave.farol = lerp(suave.farol, bruto, 0.12);
+      const p = suave.farol;
+      midiaFarol.render(piecewise(MAPA_T_FAROL, p));
+      const i = intensidadeFarol(p);
+      el.farolBloom.style.opacity = i.toFixed(3);
+      el.farolBloom.style.transform = `translate(-50%,-50%) scale(${(0.4 + 1.5*i).toFixed(3)})`;
+      el.fxFarol.style.filter = `brightness(${(0.3 + 0.8*i).toFixed(3)})`;
+      el.farolContorno.style.opacity = (0.5 * (1 - seg(p, .06, .14))).toFixed(3);
+      const entra = easeOutCubic(seg(p, .38, .50));
+      const saiTx = easeInOutQuad(seg(p, .62, .78));
+      el.farolTexto.style.opacity = (entra * (1 - saiTx)).toFixed(3);
+      el.farolTexto.style.transform = `translateY(${(1-entra)*30 - saiTx*20}px)`;
+      el.farolOverlay.style.opacity = easeInOutQuad(seg(p, .70, 1)).toFixed(3);
+    }
+
+    /* ESTOQUE — trilho horizontal (desktop): o scroll vertical vira
+       deslocamento lateral; cada card "sobe" ao entrar pela direita */
+    if (cache.estoque.dist > 0){
+      const ce = cache.estoque;
+      const bruto = clamp01((alvoScroll - ce.top) / ce.dist);
+      suave.estoque = lerp(suave.estoque, bruto, 0.12);
+      const x = -ce.dist * suave.estoque;
+      el.gridCarros.style.transform = `translate3d(${x.toFixed(1)}px,0,0)`;
+      for (const c of ce.cards){
+        const xNoViewport = c.left + x;
+        const t = easeOutCubic(clamp01((ce.contentW + 120 - xNoViewport) / 420));
+        c.el.style.setProperty("--in", t.toFixed(3));
+      }
+    }
+
+    /* BARRA DE AÇÃO — liga/desliga conforme o limiar (reversível) */
+    {
+      const mostrar = alvoScroll > (cache.barraLimiar || Infinity);
+      if (mostrar !== quadro.barraVisivel){
+        quadro.barraVisivel = mostrar;
+        el.barraAcao.classList.toggle("visivel", mostrar);
+        document.body.classList.toggle("barra-on", mostrar);
+      }
+    }
+
+    /* BLOCOS (progresso contínuo) */
+    for (let i = 0; i < cache.blocos.length; i++){
+      const cb = cache.blocos[i], partes = blocosPartes[i];
+      const p = clamp01((alvoScroll + cache.vh - cb.top) / (cache.vh * 0.7));
+      const e = easeOutCubic(p);
+      const dir = partes.ehPar ? 1 : -1;
+      partes.img.style.transform = `translateX(${dir * -80 * (1 - e)}px)`;
+      partes.img.style.opacity = e.toFixed(3);
+      partes.itens.forEach((item, k) => {
+        const pe = easeOutCubic(clamp01(p - k * CONFIG.animacao.staggerBlocos) * 1.25);
+        item.style.transform = `translateX(${dir * 60 * (1 - pe)}px)`;
+        item.style.opacity = pe.toFixed(3);
+      });
+      if (partes.contador){
+        const alvo = +partes.contador.dataset.valor;
+        const suf  = partes.contador.dataset.sufixo || "";
+        const v = Math.round(alvo * easeOutCubic(p));
+        const txt = v.toLocaleString(LOCALES[idiomaAtivo]) + suf;
+        if (partes.contador.textContent !== txt) partes.contador.textContent = txt;
+      }
+    }
+
+    } /* fim do trabalho exclusivo da home */
+
+    /* LUMENS dos serviços: cada luz acende no seu ponto do percurso,
+       com escala crescendo junto — apagam em marcha à ré ao subir */
+    if (cache.blocosSec && cache.lumens){
+      const ps = clamp01((alvoScroll + cache.vh - cache.blocosSec.top) / cache.blocosSec.altura);
+      for (const l of cache.lumens){
+        const t0 = (ps - l.atraso) * 2.6;
+        let t;
+        if (t0 <= 0) t = 0;
+        else {
+          const fw = clamp01(t0 / 0.16); /* janela de flicker da ignição */
+          if (fw < 1){
+            const idx = fw * (FLICKER.length - 1);
+            const i0 = Math.floor(idx), i1 = Math.min(i0 + 1, FLICKER.length - 1);
+            t = lerp(FLICKER[i0], FLICKER[i1], idx - i0) * 0.5;
+          } else {
+            t = 0.5 + 0.5 * easeOutCubic(clamp01((t0 - 0.16) / 0.84));
+          }
+        }
+        l.el.style.opacity = t.toFixed(3);
+        l.el.style.transform = `scale(${(0.6 + 0.4 * t).toFixed(3)})`;
+      }
+    }
+
+    /* FINALE — a logo entra do escuro; presente em TODAS as páginas.
+       Só o finale da view visível tem altura > 0. */
+    for (const f of finales){
+      if (!f.altura) continue;
+      /* o progresso começa MEIA TELA antes do pin: a logo já se
+         materializa enquanto o preto ainda sobe — menos tela morta */
+      const antecipo = cache.vh * 0.55;
+      const bruto = clamp01((alvoScroll - (f.top - antecipo)) / ((f.altura - cache.vh) + antecipo));
+      f.suave = lerp(f.suave, bruto, 0.12);
+      const p = f.suave;
+      const surge = easeOutCubic(seg(p, .02, .40));
+      f.logo.style.opacity = surge.toFixed(3);
+      f.logo.style.filter = surge < 0.999 ? `blur(${(14*(1-surge)).toFixed(2)}px)` : "none";
+      f.logo.style.transform = `scale(${(0.92 + 0.08*surge).toFixed(4)})`;
+      const sw = seg(p, .20, .52);
+      f.sweep.style.transform =
+        `translateX(${(-140 + 700 * easeInOutQuad(sw)).toFixed(1)}%) skewX(-12deg)`;
+      f.sweep.style.opacity = (4 * sw * (1 - sw) * surge).toFixed(3);
+      const t = easeOutCubic(seg(p, .45, .70));
+      f.tag.style.opacity = t.toFixed(3);
+      f.tag.style.transform = `translateY(${((1-t)*18).toFixed(1)}px)`;
+    }
+
+    requestAnimationFrame(quadro);
+  }
+  requestAnimationFrame(quadro);
+
+  /* ---------- reveladores por IO (home + páginas) ----------
+     Toggle nos dois sentidos ⇒ reversível; stagger via delay inline. */
+  function observarReveals(){
+    observadores.forEach(o => o.disconnect());
+    observadores.length = 0;
+
+    /* home: cabeçalho do estoque + cards (gatilho a 75% da viewport) */
+    const head = document.querySelector("[data-reveal='head']");
+    /* no modo trilho, os cards da home são dirigidos pelo rAF (--in),
+       não pelo IntersectionObserver */
+    const cardsHome = document.body.classList.contains("estoque-h")
+      ? [] : [...document.querySelectorAll("[data-view='home'] [data-card]")];
+    cardsHome.forEach((c, i) => {
+      c.style.transitionDelay = "0ms";
+      c.dataset.delay = (i % 3) * CONFIG.animacao.staggerCards + "ms";
+    });
+    const ioHome = new IntersectionObserver(entradas => {
+      for (const e of entradas){
+        if (e.isIntersecting){
+          if (e.target.dataset.delay) e.target.style.transitionDelay = e.target.dataset.delay;
+          e.target.classList.add("is-in");
+        } else if (e.boundingClientRect.top > 0){
+          e.target.style.transitionDelay = "0ms";
+          e.target.classList.remove("is-in");
+        }
+      }
+    }, { rootMargin: "0px 0px -25% 0px" });
+    ioHome.observe(head);
+    cardsHome.forEach(c => ioHome.observe(c));
+    observadores.push(ioHome);
+
+    /* páginas internas: [data-anim] e cards, mesma mecânica reversível */
+    document.querySelectorAll(".pagina").forEach(view => {
+      const alvos = [...view.querySelectorAll("[data-anim],[data-card]")];
+      alvos.forEach((a, i) => {
+        a.style.transitionDelay = "0ms";
+        if (!a.dataset.delay)
+          a.dataset.delay = Math.min(i, 8) * CONFIG.animacao.staggerPagina + "ms";
+      });
+      const io = new IntersectionObserver(entradas => {
+        for (const e of entradas){
+          const cls = e.target.hasAttribute("data-card") ? "is-in" : "anim-in";
+          if (e.isIntersecting){
+            e.target.style.transitionDelay = e.target.dataset.delay;
+            e.target.classList.add(cls);
+          } else if (e.boundingClientRect.top > 0){
+            e.target.style.transitionDelay = "0ms";
+            e.target.classList.remove(cls);
+          }
+        }
+      }, { rootMargin: "0px 0px -12% 0px" });
+      alvos.forEach(a => io.observe(a));
+      observadores.push(io);
+    });
+  }
+  observarReveals();
+
+  /* ao entrar numa página, zera e re-observa para re-disparar a entrada */
+  addEventListener("rota:aplicada", e => {
+    if (e.detail.rota === "home"){
+      /* reinicia a animação de entrada do hero (remove/força reflow/devolve) */
+      document.querySelectorAll(".hero-copy .eyebrow, .hero-copy .hero-titulo, .hero-copy .hero-sub")
+        .forEach(t => { t.style.animation = "none"; void t.offsetWidth; t.style.animation = ""; });
+    }
+    if (e.detail.rota !== "home"){
+      document.querySelectorAll(`[data-view='${e.detail.rota}'] .anim-in`)
+        .forEach(x => x.classList.remove("anim-in"));
+      document.querySelectorAll(`[data-view='${e.detail.rota}'] .is-in`)
+        .forEach(x => x.classList.remove("is-in"));
+    }
+    coletarFinales(); /* páginas re-renderizadas trocam os nós do finale */
+    observarReveals();
+    medir();
+  });
+  addEventListener("i18n:aplicado", () => { coletarFinales(); observarReveals(); medir(); });
+  addEventListener("reveals:atualizar", () => { observarReveals(); medir(); });
+}
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+renderBlocos();
+renderSociais();
+aplicarIdioma(idiomaAtivo); /* renderiza home + as 3 páginas no idioma ativo */
+aplicarRota(rotaDoHash()); /* respeita deep link se houver hash na URL */
+const forcarMotion = /[?&#]motion=1/.test(location.href); /* override de teste */
+if (prefereMenosMovimento && !forcarMotion){
+  /* o SO pediu menos movimento: layout estático com posters em tela
+     cheia + botão para a pessoa optar pelas animações mesmo assim */
+  document.body.classList.add("sem-motion");
+  const chip = document.getElementById("ativarMotion");
+  chip.hidden = false;
+  chip.addEventListener("click", () => {
+    document.body.classList.remove("sem-motion");
+    chip.remove();
+    iniciarMotor();
+  }, { once:true });
+  logar("[Absolut] prefers-reduced-motion detectado no sistema: layout estático ativo. Clique em 'ativar animações' para o modo completo.");
+} else {
+  iniciarMotor();
+}
+/* se a pessoa desligar "reduzir animações" no SO com a página aberta,
+   o navegador propaga a mudança e o site liga o motor sozinho */
+mqReduz.addEventListener?.("change", e => {
+  if (!e.matches && document.body.classList.contains("sem-motion")){
+    document.body.classList.remove("sem-motion");
+    document.getElementById("ativarMotion")?.remove();
+    iniciarMotor();
+    logar("[Absolut] preferência do sistema mudou: animações ativadas automaticamente.");
+  }
+});
+
+/* ---- painel de diagnóstico: abra a página com ?debug=1 ---- */
+if (/[?&#]debug/.test(location.href)){
+  const pn = document.createElement("div");
+  pn.style.cssText = "position:fixed;right:12px;bottom:12px;z-index:99;" +
+    "background:rgba(12,14,18,.94);border:1px solid #39414C;border-radius:6px;" +
+    "padding:10px 12px;font:11px/1.7 monospace;color:#9FC4DE;max-width:340px;" +
+    "white-space:pre-wrap;pointer-events:none";
+  document.body.appendChild(pn);
+  setInterval(() => {
+    const a = window.__abs || {};
+    pn.textContent =
+"[Absolut debug]\n" +
+"reduced-motion agora: " + matchMedia("(prefers-reduced-motion: reduce)").matches + "\n" +
+"sem-motion ativo: " + document.body.classList.contains("sem-motion") + "\n" +
+"motor iniciado: " + !!iniciarMotor.rodou + "\n" +
+"mídia hero: " + (a.midiaHero ? a.midiaHero.modo + (a.midiaHero.frames ? " (" + a.midiaHero.frames.length + " frames)" : "") : "—") + "\n" +
+"progresso hero: " + (a.suave ? a.suave.hero.toFixed(3) : "—") + "\n" +
+"scrollY: " + Math.round(scrollY) + " | viewport: " + innerWidth + "x" + innerHeight + "\n" +
+"erros JS: " + (a.erros.length ? a.erros.join(" | ") : "nenhum");
+  }, 300);
+}
+</script>
+</body>
+</html>
