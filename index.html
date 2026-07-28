@@ -720,6 +720,9 @@ body.js-motion .finale-logo-wrap img{ opacity:0; } /* rAF assume no 1º frame */
 }
 @media (max-width:700px){
   :root{ --pin-h:200vh; --pin-h-finale:160vh; }
+  /* GPU de celular: blur menor e menos lumens (4 em vez de 7) */
+  .lumen{ filter:blur(14px); }
+  .lumen:nth-child(2), .lumen:nth-child(5), .lumen:nth-child(7){ display:none; }
   /* header em duas linhas: [logo ......... idioma] / [navegação] —
      numa linha só, logo + 3 links + 3 botões estouram os 360px */
   .site-header{ flex-wrap:wrap; padding-bottom:0; }
@@ -1379,6 +1382,11 @@ class ScrubMedia {
     this.desenharStandIn = desenharStandIn;
     this.modo = "esperando";
     this.duracao = 0; this.tempoSuave = 0; this.ultimoEscrito = -1;
+    /* celular decodifica seek de vídeo com esforço: quantizamos o
+       tempo em passos maiores (1/10s ≈ a cada 2 frames da fonte) e
+       usamos fastSeek quando existe (iOS pula direto pro keyframe) */
+    this.ehToque = matchMedia("(pointer: coarse)").matches;
+    this.quantum = this.ehToque ? 1/10 : 1/90;
     this.frames = null; this.ultimoFrame = -1;
 
     if (frames && frames.length){
@@ -1438,8 +1446,12 @@ class ScrubMedia {
     if (this.modo === "video"){
       const alvo = progress * this.duracao;
       this.tempoSuave = lerp(this.tempoSuave, alvo, CONFIG.animacao.lerp);
-      if (Math.abs(this.tempoSuave - this.ultimoEscrito) > 1/90){
-        this.video.currentTime = this.tempoSuave;
+      if (Math.abs(this.tempoSuave - this.ultimoEscrito) > this.quantum){
+        if (this.ehToque && typeof this.video.fastSeek === "function"){
+          this.video.fastSeek(this.tempoSuave);
+        } else {
+          this.video.currentTime = this.tempoSuave;
+        }
         this.ultimoEscrito = this.tempoSuave;
       }
     } else if (this.modo === "canvas"){
